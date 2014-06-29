@@ -4,7 +4,12 @@ abstract class FormField extends Base
 {
     public function setForm(Form $form)
     {
-        $this->Form = $form;
+        $this->form = $form;
+    }
+
+    public function getId()
+    {
+        return str_replace('/', '_', $this->form->action() . '_' . $this->name);
     }
 
     public function validate($value)
@@ -20,15 +25,15 @@ abstract class FormField extends Base
 
     public function setError($msg)
     {
-        $_SESSION[$this->name . '_error'] = $msg;
+        $_SESSION[$this->getId() . '_error'] = $msg;
     }
 
     public function getError($keep = false)
     {
         $msg = false;
-        if (isset($_SESSION[$this->name . '_error'])) {
-            $msg = $_SESSION[$this->name . '_error'];
-            if (!$keep) unset($_SESSION[$this->name . '_error']);
+        if (isset($_SESSION[$this->getId() . '_error'])) {
+            $msg = $_SESSION[$this->getId() . '_error'];
+            if (!$keep) unset($_SESSION[$this->getId() . '_error']);
         }
         return $msg;
     }

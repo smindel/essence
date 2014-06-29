@@ -6,6 +6,7 @@
 </head>
 <body>
 <h1>Edit</h1>
+<h3>@todo: on error restore form field values from session !!</h3>
 {{{$Form}}}
 </body>
 </html>
