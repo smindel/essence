@@ -17,7 +17,7 @@ class FileSystem
             while(
                 $iterator->valid() &&
                 ($fileinfo = $iterator->current()) &&
-                !($match = strtolower($fileinfo->getBasename('.php')) == strtolower($name))
+                !($match = strtolower($fileinfo->getBasename('.' . $ext)) == strtolower($name))
             ) $iterator->next();
         }
 

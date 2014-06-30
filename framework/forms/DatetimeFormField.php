@@ -13,6 +13,6 @@ class DatetimeFormField extends FormField
 
     public function __toString()
     {
-        return '<div class="field ' . get_class($this) . '"><div>' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"datetime\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"{$this->value}\"></div>";
+        return '<div class="field ' . get_class($this) . '"><div>' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"datetime-local\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"{$this->value}\"></div>";
     }
 }

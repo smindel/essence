@@ -24,7 +24,7 @@ class Form extends Base
         if (isset($_REQUEST['SecurityID'])) {
             $error = false;
             foreach ($fields as $field) {
-                if (!$field->validate($_REQUEST[$field->name])) {
+                if (!($field instanceof SubmitFormField) && !$field->validate($_REQUEST[$field->name])) {
                     $field->setError('Validation failed');
                     $error = true;
                 }

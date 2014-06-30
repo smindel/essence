@@ -2,6 +2,45 @@
 
 class Model extends Base
 {
+    protected $db = array(
+        'id' => array(
+            'type' => 'INTEGER PRIMARY KEY AUTOINCREMENT',
+            'field' => 'HiddenFormField',
+            'label' => 'ID',
+            'value' => 0
+        ),
+    );
+    
+    public static function db($valtype = 'value', $keytype = 'raw')
+    {
+        $args = func_get_args();
+        $class = get_called_class();
+        if ($class == 'Model') $class = array_shift($args);
+        $object = $class::create();
+        $valtype = array_shift($args);
+        $keytype = array_shift($args);
+        $defaults = array('type' => 'auto', 'field' => null, 'value' => null);
+        $db = array();
+        foreach ($object->db as $col => $options) {
+            $defaults['label'] = $col;
+            switch ($keytype) {
+                case 'colon': $key = ':' . $col; break;
+                case 'doublequoted': $key = '"' . $col . '"'; break;
+                default: $key = $col;
+            }
+            switch ($valtype) {
+                case 'colon': $val = ':' . $col; break;
+                case 'doublequoted': $val = '"' . $col . '"'; break;
+                case 'key': $val = $col;
+                case 'singlequoted': $val = isset($options['value']) ? "'{$options['value']}'" : "''"; break;
+                case 'options': $val = array_merge($defaults, $options); break;
+                default: $val = isset($options[$valtype]) ? $options[$valtype] : (isset($defaults[$valtype]) ? $defaults[$valtype] : null); break;
+            }
+            $db[$key] = $val;
+        }
+        return $db;
+    }
+
     public static function _base_class()
     {
         $class = get_called_class();
@@ -12,15 +51,6 @@ class Model extends Base
             $i++;
         }
         return $class;
-    }
-
-    public static function _build()
-    {
-        $class = get_called_class();
-        $specs = array();
-        $model = $class::create();
-        foreach ($model->db as $key => $options) $specs[$key] = isset($options['type']) ? $options['type'] : 'auto';
-        Database::build(self::_base_class(), $specs);
     }
 
     public function getFields()
@@ -36,12 +66,17 @@ class Model extends Base
             );
         }
         if ($this->id) {
-            $fields[] = SubmitFormField::create('form_submit', 'ändern');
-            $fields[] = SubmitFormField::create('form_submit', 'löschen');
+            $fields[] = SubmitFormField::create('form_save', 'ändern');
+            $fields[] = SubmitFormField::create('form_delete', 'löschen');
         } else {
-            $fields[] = SubmitFormField::create('form_submit', 'erstellen');
+            $fields[] = SubmitFormField::create('form_save', 'erstellen');
         }
         return $fields;
+    }
+
+    public function title()
+    {
+        return get_class($this) . " ({$this->id})";
     }
 
     public static function one()
@@ -105,11 +140,22 @@ class Model extends Base
 
     public function write()
     {
+        if (method_exists($this, 'beforeWrite')) if (!$this->beforeWrite()) return $this;
         foreach ($this->db as $name => $field) {
-            if ($name == 'id' && !is_numeric($field['value'])) continue;
+            if (!isset($field['value']) || $name == 'id' && !is_numeric($field['value'])) continue;
             $props[$name] = $field['value'];
         }
         $this->db['id']['value'] = Database::replace(self::_base_class(), $props);
+        if (method_exists($this, 'afterWrite')) $this->afterWrite();
+        return $this;
+    }
+
+    public function delete()
+    {
+        if (method_exists($this, 'beforeDelete')) if (!$this->beforeDelete()) return $this;
+        Database::delete(self::_base_class(), $this->db['id']['value']);
+        unset($this->db['id']['value']);
+        if (method_exists($this, 'afterDelete')) $this->afterDelete();
         return $this;
     }
 }

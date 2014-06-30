@@ -12,7 +12,7 @@ class Database
         return self::$_conn;
     }
 
-    public static function build($table, $specs)
+    public static function create($table, $specs)
     {
         $def = array();
         foreach ($specs as $key => $val) {
@@ -26,7 +26,8 @@ class Database
         $params = array();
         $where = count($filter) ? array() : array('1');
         foreach ($filter as $key => $val) {
-            $where[] = "\"{$key}\" = :{$key}";
+            list($key, $operator) = explode(':', $key . ':=');
+            $where[] = "\"{$key}\" {$operator} :{$key}";
             $params[':' . $key] = $val;
         }
         $sql = 'SELECT * FROM "' . $table . '" WHERE ' . implode(' AND ', $where);
@@ -35,8 +36,32 @@ class Database
             throw new Exception(self::conn()->errorInfo()[2]);
         } else {
             $sth->execute($params);
-            return $sth->fetchAll();
+            return $sth->fetchAll(PDO::FETCH_ASSOC);
         }
+    }
+
+    public static function query($sql, $style = PDO::FETCH_ASSOC)
+    {
+        $sth = self::conn()->query($sql);
+        if(self::conn()->errorInfo()[2]) {
+            throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+        }
+        return $sth->fetchAll($style);
+    }
+
+    public static function tables()
+    {
+        return self::query("SELECT \"name\" FROM \"sqlite_master\" WHERE \"type\" = 'table' AND \"name\" NOT LIKE 'sqlite_%'", PDO::FETCH_COLUMN);
+    }
+
+    public static function table($table)
+    {
+        $results = self::query("PRAGMA table_info(\"{$table}\")");
+        $cols = array();
+        foreach ($results as $result) {
+            $cols[$result['name']] = $result;
+        }
+        return $cols;
     }
 
     public static function replace($table, $values)
@@ -56,6 +81,20 @@ class Database
                 throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
             }
             return self::conn()->lastInsertId() ?: $values['id'];
+        }
+    }
+
+    public static function delete($table, $id)
+    {
+        $sql = 'DELETE FROM "' . $table . '" WHERE "id" = :id';
+        $sth = self::conn()->prepare($sql);
+        if (!$sth) {
+            throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+        } else {
+            $sth->execute(array(':id' => $id));
+            if(self::conn()->errorInfo()[2]) {
+                throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+            }
         }
     }
 }

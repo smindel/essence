@@ -21,8 +21,6 @@ define('ENV_TYPE', 'dev');
 define('BASE_PATH', dirname($_SERVER["SCRIPT_FILENAME"]));
 define('BASE_URL', 'http://' . $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) . '/');
 
-Device::_build();
-// $model = new Model();
-// aDebug($model->write());
+Builder::$managed_models = Admin::$managed_models = array('Device', 'Test');
 
 Request::create()->handle();

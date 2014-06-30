@@ -2,8 +2,13 @@
 
 abstract class Controller extends Base
 {
+    protected static $_curr;
+
     public function handleRequest($request)
     {
+        self::$_curr = $this;
+        $this->request = $request;
+
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
         $data = $this->handleAction($request->methodname, $request->parameters);
@@ -41,5 +46,10 @@ abstract class Controller extends Base
     public function link()
     {
         return BASE_URL . get_class($this) . '/' . implode('/', func_get_args());
+    }
+
+    public static function curr()
+    {
+        return self::$_curr;
     }
 }
