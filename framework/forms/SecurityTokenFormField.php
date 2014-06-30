@@ -10,7 +10,7 @@ class SecurityTokenFormField extends FormField
 
     public function __toString()
     {
-        return '<div>' . $this->getError() . "</div><input type=\"hidden\" id=\"SecurityID\" name=\"SecurityID\" value=\"" . $this->value() . "\">";
+        return "<input type=\"hidden\" id=\"SecurityID\" name=\"SecurityID\" value=\"" . $this->value() . "\">";
     }
 
     public function value()

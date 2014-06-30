@@ -12,6 +12,6 @@ class SubmitFormField extends FormField
 
     public function __toString()
     {
-        return "<input type=\"submit\" name=\"{$this->name}\" value=\"{$this->label}\">";
+        return "<div class=\"field " . get_class($this) . "\"><input type=\"submit\" name=\"{$this->name}\" value=\"{$this->label}\"></div>";
     }
 }

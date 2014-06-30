@@ -37,4 +37,9 @@ abstract class Controller extends Base
     {
         $this->redirect($_SERVER['HTTP_REFERER']);
     }
+
+    public function link()
+    {
+        return BASE_URL . get_class($this) . '/' . implode('/', func_get_args());
+    }
 }

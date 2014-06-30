@@ -1,6 +1,6 @@
 <?php
 
-class TextFormField extends FormField
+class HiddenFormField extends FormField
 {
     public static function create()
     {
@@ -13,6 +13,6 @@ class TextFormField extends FormField
 
     public function __toString()
     {
-        return '<div class="field ' . get_class($this) . '"><div>' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"text\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"{$this->value}\"></div>";
+        return "<input type=\"hidden\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"{$this->value}\">";
     }
 }

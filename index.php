@@ -1,5 +1,8 @@
 <?php
 
+ini_set('xdebug.var_display_max_depth', 5);
+ini_set('xdebug.var_display_max_data', 2048);
+
 include('framework/FileSystem.php');
 
 spl_autoload_register(array('FileSystem', 'autoload'));
@@ -17,5 +20,9 @@ session_start();
 define('ENV_TYPE', 'dev');
 define('BASE_PATH', dirname($_SERVER["SCRIPT_FILENAME"]));
 define('BASE_URL', 'http://' . $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) . '/');
+
+Device::_build();
+// $model = new Model();
+// aDebug($model->write());
 
 Request::create()->handle();

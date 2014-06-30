@@ -24,8 +24,7 @@ abstract class Base
 
     public function __get($name)
     {
-        if (isset($this->dependencies[$name])) return $this->dependencies[$name];
-        throw new Exception("Use of undefined property '" . get_class($this) . "->{$name}'");
+        return isset($this->dependencies[$name]) ? $this->dependencies[$name] : null;
     }
 
     public function __set($name, $value)
