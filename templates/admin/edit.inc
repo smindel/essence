@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-<meta charset='utf-8'>
-<base href="{{{BASE_URL}}}">
 <head>
+    <meta charset='utf-8'>
+    <base href="{{{BASE_URL}}}">
+    <link href='static/admin.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
-<h1>Edit <small><a href="{{{$Me->link('list', get_class($Form->object))}}}">abbrechen</a></small></h1>
+<h1>Bearbeiten <small><a href="{{{$Me->link('list', get_class($Form->object))}}}">zurück</a></small></h1>
 {{{$Form}}}
 </body>
 </html>

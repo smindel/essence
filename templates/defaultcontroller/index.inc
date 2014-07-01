@@ -1,7 +1,11 @@
-<h1>Hallo Welt</h1>
-<ul>
-    <li><a href="admin/edit">admin/edit</a></li>
-    <li><a href="admin/login">admin/login</a></li>
-    <li><a href="router/index">router/index</a></li>
-    <li><a href="router/bounce">router/bounce</a></li>
-</ul>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <base href="{{{BASE_URL}}}">
+    <link href='static/builder.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<h1>Hello World</h1>
+</body>
+</html>

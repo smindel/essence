@@ -24,4 +24,5 @@ define('BASE_URL', 'http://' . $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strle
 
 Builder::$managed_models = Admin::$managed_models = array('Device', 'Questionnaire', 'User');
 
+Request::$default_controller_class = 'Router';
 Request::create()->handle();
