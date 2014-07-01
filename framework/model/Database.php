@@ -8,6 +8,7 @@ class Database
     {
         if (!self::$_conn) {
             self::$_conn = new PDO('sqlite:' . BASE_PATH . '/db.sqlite');
+            self::query('PRAGMA foreign_keys = ON');
         }
         return self::$_conn;
     }
@@ -16,9 +17,21 @@ class Database
     {
         $def = array();
         foreach ($specs as $key => $val) {
+            $val = self::spec($val);
             $def[] = $val == 'auto' ? "\"{$key}\"" : "\"{$key}\" $val";
         }
         Database::conn()->query("CREATE TABLE IF NOT EXISTS \"{$table}\" (" . implode(', ', $def) . ")");
+    }
+
+    public static function spec($in)
+    {
+        list($metatype, $param1, $param2) = explode(':', $in . '::');
+        switch ($metatype) {
+            case 'ID': return 'INTEGER PRIMARY KEY AUTOINCREMENT';
+            case 'DATE': return 'DATE';
+            case 'DATETIME': return 'DATETIME';
+            case 'FOREIGN': return "INTEGER REFERENCES {$param1}(id) ON DELETE " . ($param2 ?: 'SET NULL');
+        }
     }
 
     public static function select($table, $filter = array())

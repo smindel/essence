@@ -4,7 +4,13 @@ class Model extends Base
 {
     protected $db = array(
         'id' => array(
-            'type' => 'INTEGER PRIMARY KEY AUTOINCREMENT',
+            'type' => 'ID',
+            'field' => 'HiddenFormField',
+            'label' => 'ID',
+            'value' => 0
+        ),
+        'fid' => array(
+            'type' => 'FOREIGN:tablename:|RESTRICT|CASCADE',
             'field' => 'HiddenFormField',
             'label' => 'ID',
             'value' => 0
@@ -39,6 +45,19 @@ class Model extends Base
             $db[$key] = $val;
         }
         return $db;
+    }
+
+    public function options($field)
+    {
+        list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
+        $options = $param1::get();
+        if ($param2 == 'SET NULL') array_unshift($options, $param1::create());
+        return $options;
+    }
+
+    public function option($field)
+    {
+        foreach ($this->options($field) as $option) if ($option->id == $this->$field) return $option;
     }
 
     public static function _base_class()

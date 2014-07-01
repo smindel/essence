@@ -13,6 +13,17 @@ class SecurityTokenFormField extends FormField
         return "<input type=\"hidden\" id=\"SecurityID\" name=\"SecurityID\" value=\"" . $this->value() . "\">";
     }
 
+    public function __get($key)
+    {
+        if ($key != 'value') return parent::__get($key);
+        return $this->value();
+    }
+
+    public function __set($key, $val)
+    {
+        if ($key != 'value') return parent::__set($key, $val);
+    }
+
     public function value()
     {
         if (isset($_SESSION['SecurityID'])) {

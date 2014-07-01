@@ -18,9 +18,10 @@ function aDebug() {
 
 session_start();
 define('ENV_TYPE', 'dev');
+define('PASS_SALT', 'k.jna5v(8&');
 define('BASE_PATH', dirname($_SERVER["SCRIPT_FILENAME"]));
 define('BASE_URL', 'http://' . $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) . '/');
 
-Builder::$managed_models = Admin::$managed_models = array('Device', 'Test');
+Builder::$managed_models = Admin::$managed_models = array('Device', 'Questionnaire', 'User');
 
 Request::create()->handle();

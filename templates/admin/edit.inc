@@ -6,7 +6,6 @@
 </head>
 <body>
 <h1>Edit <small><a href="{{{$Me->link('list', get_class($Form->object))}}}">abbrechen</a></small></h1>
-<h3>@todo: on error restore form field values from session !!</h3>
 {{{$Form}}}
 </body>
 </html>

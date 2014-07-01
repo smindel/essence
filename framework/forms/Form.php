@@ -21,22 +21,45 @@ class Form extends Base
         $fields = func_get_arg(0);
         $form = parent::create(compact('constructor', 'fields', 'object'));
         foreach ($fields as $field) $field->setForm($form);
-        if (isset($_REQUEST['SecurityID'])) {
-            $error = false;
-            foreach ($fields as $field) {
-                if (!($field instanceof SubmitFormField) && !$field->validate($_REQUEST[$field->name])) {
-                    $field->setError('Validation failed');
-                    $error = true;
-                }
-                if ($field instanceof SubmitFormField && isset($_REQUEST[$field->name])) {
-                    $callback = array($form->constructor[0], $field->name);
-                }
+
+        return $form->setData($_REQUEST);
+    }
+
+    public function setData($data)
+    {
+        $error = $callback = false;
+        foreach ($this->fields as $field) {
+            $submittedvalue = isset($data[$field->name]) ? $data[$field->name] : null;
+            if ($field instanceof SubmitFormField && isset($submittedvalue)) {
+                $callback = array($this->constructor[0], $field->name);
             }
-            if ($error) return $form->redirectBack();
-            return call_user_func($callback, $form, $_REQUEST);
-        } else {
-            return $form;
         }
+
+        if ($callback) foreach ($this->fields as $field) {
+            $submittedvalue = isset($data[$field->name]) ? $data[$field->name] : null;
+            if (!$field->validate($submittedvalue)) {
+                $field->setError('Validation failed');
+                $error = true;
+            }
+            $field->value = isset($submittedvalue) ? $submittedvalue : null;
+        }
+
+        if ($error) {
+            return $this->redirectBack();
+        } else if ($callback) {
+            return call_user_func($callback, $this);
+        } else {
+            return $this;
+        }
+    }
+
+    public function getData()
+    {
+        $data = array();
+        foreach ($this->fields as $field) {
+            if (isset($field->value) && isset($field->name)) $data[$field->name] = $field->value;
+        }
+        return $data;
     }
 
     public function render($method, $data)

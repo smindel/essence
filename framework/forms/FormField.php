@@ -14,7 +14,7 @@ abstract class FormField extends Base
 
     public function validate($value)
     {
-        return isset($this->validator) ? call_user_func($this->validator, $value) : true;
+        return isset($this->validator) ? call_user_func($this->validator, $value, $this, $form) : true;
     }
 
     public function setValidator($validator)
