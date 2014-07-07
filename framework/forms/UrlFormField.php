@@ -1,3 +1,3 @@
 <?php
 
-class UrlFormField extends TextFormField {}
+class UrlFormField extends FormField {}

@@ -1,6 +1,6 @@
 <?php
 
-class SubmitFormField extends TextFormField
+class SubmitFormField extends FormField
 {
     public function __toString()
     {

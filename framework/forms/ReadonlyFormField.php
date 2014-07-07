@@ -1,6 +1,6 @@
 <?php
 
-class ReadonlyFormField extends TextFormField
+class ReadonlyFormField extends FormField
 {
     public function __toString()
     {

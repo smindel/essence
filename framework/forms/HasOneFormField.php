@@ -1,6 +1,6 @@
 <?php
 
-class HasOneFormField extends TextFormField
+class HasOneFormField extends FormField
 {
     public function __toString()
     {

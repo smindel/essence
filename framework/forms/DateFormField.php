@@ -1,3 +1,3 @@
 <?php
 
-class DateFormField extends TextFormField {}
+class DateFormField extends FormField {}

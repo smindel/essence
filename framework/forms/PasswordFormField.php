@@ -1,6 +1,6 @@
 <?php
 
-class PasswordFormField extends TextFormField
+class PasswordFormField extends FormField
 {
     public function setValue($val)
     {

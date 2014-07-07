@@ -7,13 +7,13 @@ class Model extends Base
             'type' => 'ID',
             'field' => 'HiddenFormField',
             'label' => 'ID',
-            'value' => 0
+            'value' => null
         ),
         'fid' => array(
             'type' => 'FOREIGN:tablename:|RESTRICT|CASCADE',
             'field' => 'HiddenFormField',
             'label' => 'ID',
-            'value' => 0
+            'value' => null
         ),
     );
     
@@ -74,27 +74,28 @@ class Model extends Base
 
     public function getFields()
     {
-        $fields = array(SecurityTokenFormField::create('SecurityID'));
+        $fields = array('SecurityID' => SecurityTokenFormField::create('SecurityID'));
         foreach ($this->db as $key => $options) {
             if (empty($options['field'])) continue;
             $fieldclass = $options['field'];
-            $fields[] = $fieldclass::create(
+            $fields[$key] = $fieldclass::create(
                 $key,
                 isset($options['label']) ? $options['label'] : $key,
                 isset($options['value']) ? $options['value'] : null
             );
         }
         if ($this->id) {
-            $fields[] = SubmitFormField::create('form_save', 'ändern');
-            $fields[] = SubmitFormField::create('form_delete', 'löschen');
+            $fields['form_save'] = SubmitFormField::create('form_save', 'ändern');
+            $fields['form_delete'] = SubmitFormField::create('form_delete', 'löschen');
         } else {
-            $fields[] = SubmitFormField::create('form_save', 'erstellen');
+            $fields['form_save'] = SubmitFormField::create('form_save', 'erstellen');
         }
         return $fields;
     }
 
     public function title()
     {
+        if (isset($this->db['Name'])) return $this->Name;
         return get_class($this) . " ({$this->id})";
     }
 

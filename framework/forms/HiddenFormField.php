@@ -1,6 +1,6 @@
 <?php
 
-class HiddenFormField extends TextFormField
+class HiddenFormField extends FormField
 {
     public function __toString()
     {
