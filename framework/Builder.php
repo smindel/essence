@@ -9,8 +9,8 @@ class Builder extends Controller
         $messages = array();
 
         $count = 0;
-        foreach (FileSystem::search_path('cache') as $fileinfo) {
-            unlink($fileinfo->getRealPath());
+        foreach (Finder::find('\.inc$', 'cache', Finder::RETURN_ALL + Finder::REGEX) as $filepath) {
+            unlink($filepath);
             $count++;
         }
         $messages[] = array('type' => 'good', 'text' => $count . ' template files deleted');

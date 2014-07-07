@@ -1,0 +1,6 @@
+body { font-family:Helvetica; font-size:12px; }
+a { color:#88c;}
+label { display:inline-block; width:100px; }
+li.list { list-style-image:url(icons/database_go.png); }
+li.edit { list-style-image:url(icons/database_edit.png); }
+li.create { list-style-image:url(icons/database_add.png); }

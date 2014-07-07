@@ -1,11 +1,24 @@
 <?php
 
+error_reporting(E_ALL);
 ini_set('xdebug.var_display_max_depth', 5);
 ini_set('xdebug.var_display_max_data', 2048);
+date_default_timezone_set('Europe/Berlin');
 
-include('framework/FileSystem.php');
+include('framework/Finder.php');
 
-spl_autoload_register(array('FileSystem', 'autoload'));
+spl_autoload_register(function($classname){
+    $searchpattern = $classname . '.php';
+    $searchpaths = array('project', 'modules', 'framework');
+    while (empty($pathname) && ($searchpath = array_shift($searchpaths))) {
+        $pathname = Finder::find($searchpattern, $searchpath);
+    }
+    if ($pathname) {
+        include_once($pathname);
+    } else {
+        die("Unknown class '{$classname}'");
+    }
+});
 
 function aDebug() {
     $var = func_get_args();
@@ -21,8 +34,9 @@ define('ENV_TYPE', 'dev');
 define('PASS_SALT', 'k.jna5v(8&');
 define('BASE_PATH', dirname($_SERVER["SCRIPT_FILENAME"]));
 define('BASE_URL', 'http://' . $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) . '/');
+set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);
 
-Builder::$managed_models = Admin::$managed_models = array('Device', 'Questionnaire', 'User');
+Builder::$managed_models = Admin::$managed_models = array('User');
 
-Request::$default_controller_class = 'Router';
+Request::$default_controller_class = 'Index';
 Request::create()->handle();

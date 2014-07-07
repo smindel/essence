@@ -22,9 +22,17 @@ class View extends Base
 
     public function template()
     {
-        $template = strtolower("{$this->class}/{$this->template}.inc");
-        if (ENV_TYPE == 'dev' || isset($_REQUEST['flush']) || !file_exists('cache/' . str_replace('/', '.', $template))) {
-            file_put_contents('cache/' . str_replace('/', '.', $template), preg_replace(array(
+        $searchpaths = array('project', 'modules', 'framework');
+        while (empty($template) && ($searchpath = array_shift($searchpaths))) {
+            $pattern = "{$this->class}.{$this->template}.inc";
+            $template = Finder::find($pattern, $searchpath);
+        }
+        if (!$template) throw new Exception("No template found for '{$this->class}:{$this->template}'");
+
+        $cachedtemplate = 'cache' . DIRECTORY_SEPARATOR . str_replace(DIRECTORY_SEPARATOR, '.', $template);
+
+        if (ENV_TYPE == 'dev' && isset($_REQUEST['flush']) || !file_exists($cachedtemplate)) {
+            file_put_contents($cachedtemplate, preg_replace(array(
                 '/\{\{\{/',
                 '/\}\}\}/',
                 '/\{\{/',
@@ -34,8 +42,8 @@ class View extends Base
                 '; ?>',
                 '<?php ',
                 ' ?>',
-            ), file_get_contents('templates/' . $template)));
+            ), file_get_contents($template)));
         }
-        return 'cache/' . str_replace('/', '.', $template);
+        return $cachedtemplate;
     }
 }
