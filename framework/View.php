@@ -2,14 +2,13 @@
 
 class View extends Base
 {
-    public static function create()
+    protected $class;
+    protected $template;
+
+    public function __construct($class, $template)
     {
-        if (func_num_args() != 2) throw new Exception("Invalid contructor parameters for '{$class}'");
-
-        $class = func_get_arg(0);
-        $template = func_get_arg(1);
-
-        return parent::create(compact('class', 'template'));
+        $this->class = $class;
+        $this->template = $template;
     }
 
     public function render($data)

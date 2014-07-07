@@ -2,46 +2,62 @@
 
 class Form extends Base
 {
-    public static function create()
+    protected $constructor;
+    protected $fields;
+    protected $object;
+
+    public function __construct($fields)
     {
         $backtrace = debug_backtrace();
-        $constructor = array($backtrace[1]['object'], $backtrace[1]['function']);
+        // aDebug($backtrace);
+        $relevanttrace = $backtrace[3];
+        $constructor = array($relevanttrace['object'], $relevanttrace['function']);
         if (
-            is_array($backtrace[1]['args']) &&
-            count($backtrace[1]['args']) &&
-            is_subclass_of($backtrace[1]['args'][0], 'Model', true)
+            is_array($relevanttrace['args']) &&
+            count($relevanttrace['args']) &&
+            is_subclass_of($relevanttrace['args'][0], 'Model', true)
         ) {
-            $modelclass = array_shift($backtrace[1]['args']);
-            $objectid = count($backtrace[1]['args']) && is_numeric($backtrace[1]['args'][0]) ? (int)$backtrace[1]['args'][0] : null;
+            $modelclass = array_shift($relevanttrace['args']);
+            $objectid = count($relevanttrace['args']) && is_numeric($relevanttrace['args'][0]) ? (int)$relevanttrace['args'][0] : null;
             $object = $modelclass::one($objectid) ?: $modelclass::create();
         } else {
             $object = null;
         }
 
-        $fields = func_get_arg(0);
-        $form = parent::create(compact('constructor', 'fields', 'object'));
-        foreach ($fields as $field) $field->setForm($form);
+        $this->constructor = $constructor;
+        $this->fields = $fields;
+        $this->object = $object;
 
-        return $form->setData($_REQUEST);
+        foreach ($fields as $field) $field->setForm($this);
+    }
+
+    public function getObject()
+    {
+        return $this->object;
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
     }
 
     public function setData($data)
     {
         $error = $callback = false;
         foreach ($this->fields as $field) {
-            $submittedvalue = isset($data[$field->name]) ? $data[$field->name] : null;
+            $submittedvalue = isset($data[$field->getName()]) ? $data[$field->getName()] : null;
             if ($field instanceof SubmitFormField && isset($submittedvalue)) {
-                $callback = array($this->constructor[0], $field->name);
+                $callback = array($this->constructor[0], $field->getName());
             }
         }
 
         if ($callback) foreach ($this->fields as $field) {
-            $submittedvalue = isset($data[$field->name]) ? $data[$field->name] : null;
+            $submittedvalue = isset($data[$field->getName()]) ? $data[$field->getName()] : null;
             if (!$field->validate($submittedvalue)) {
                 $field->setError('Validation failed');
                 $error = true;
             }
-            $field->value = isset($submittedvalue) ? $submittedvalue : null;
+            $field->setValue($submittedvalue);
         }
 
         if ($error) {
@@ -57,7 +73,7 @@ class Form extends Base
     {
         $data = array();
         foreach ($this->fields as $field) {
-            if (isset($field->value) && isset($field->name)) $data[$field->name] = $field->value;
+            if ($field->getValue() !== null && $field->getName() !== null) $data[$field->getName()] = $field->getValue();
         }
         return $data;
     }

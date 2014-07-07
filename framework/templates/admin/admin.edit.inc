@@ -6,7 +6,7 @@
     <link href='static/admin.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
-<h1>Bearbeiten <small><a href="{{{$Me->link('list', get_class($Form->object))}}}">zurück</a></small></h1>
+<h1>Bearbeiten <small><a href="{{{$Me->link('list', get_class($Form->getObject()))}}}">zurück</a></small></h1>
 {{{$Form}}}
 </body>
 </html>

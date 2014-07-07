@@ -2,6 +2,50 @@
 
 abstract class FormField extends Base
 {
+    protected $name;
+    protected $label;
+    protected $value;
+    protected $form;
+
+    public function __construct($name, $label = null, $value = null) {
+        $this->name = $name;
+        $this->label = $label ?: $name;
+        $this->value = $value;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    public function setLabel($label)
+    {
+        $this->label = $label;
+        return $this;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+
     public function setForm(Form $form)
     {
         $this->form = $form;
@@ -10,6 +54,22 @@ abstract class FormField extends Base
     public function getId()
     {
         return str_replace('/', '_', $this->form->action() . '_' . $this->name);
+    }
+
+    public function getHtmlType()
+    {
+        $guess = strtolower(substr(get_class($this), 0, -9));
+        $htmltypes = array(
+            'date',
+            'datetime',
+            'email',
+            'hidden',
+            'password',
+            'submit',
+            'text',
+            'url',
+        );
+        return in_array($guess, $htmltypes) ? $guess : false;
     }
 
     public function validate($value)

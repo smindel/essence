@@ -1,30 +1,13 @@
 <?php
 
-class SecurityTokenFormField extends FormField
+class SecurityTokenFormField extends HiddenFormField
 {
-    public static function create()
-    {
-        $name = 'SecurityID';
-        return parent::create(compact('name'));
-    }
-
     public function __toString()
     {
-        return "<input type=\"hidden\" id=\"SecurityID\" name=\"SecurityID\" value=\"" . $this->value() . "\">";
+        return "<input type=\"hidden\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"" . $this->securityId() . "\">";
     }
 
-    public function __get($key)
-    {
-        if ($key != 'value') return parent::__get($key);
-        return $this->value();
-    }
-
-    public function __set($key, $val)
-    {
-        if ($key != 'value') return parent::__set($key, $val);
-    }
-
-    public function value()
+    public function securityId()
     {
         if (isset($_SESSION['SecurityID'])) {
             return $_SESSION['SecurityID'];

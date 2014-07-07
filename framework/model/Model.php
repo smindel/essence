@@ -74,7 +74,7 @@ class Model extends Base
 
     public function getFields()
     {
-        $fields = array(SecurityTokenFormField::create());
+        $fields = array(SecurityTokenFormField::create('SecurityID'));
         foreach ($this->db as $key => $options) {
             if (empty($options['field'])) continue;
             $fieldclass = $options['field'];

@@ -39,4 +39,4 @@ set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);
 Builder::$managed_models = Admin::$managed_models = array('User');
 
 Request::$default_controller_class = 'Index';
-Request::create()->handle();
+Request::create($_SERVER["REQUEST_URI"])->handle();

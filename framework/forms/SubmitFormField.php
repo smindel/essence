@@ -1,17 +1,9 @@
 <?php
 
-class SubmitFormField extends FormField
+class SubmitFormField extends TextFormField
 {
-    public static function create()
-    {
-        $args = func_get_args();
-        $name = array_shift($args);
-        $label = count($args) ? array_shift($args) : $name;
-        return parent::create(compact('name', 'label'));
-    }
-
     public function __toString()
     {
-        return "<div class=\"field " . get_class($this) . "\"><input type=\"submit\" name=\"{$this->name}\" value=\"{$this->label}\"></div>";
+        return "<div class=\"field " . get_class($this) . "\"><input type=\"" . $this->getHtmlType() . "\" name=\"{$this->name}\" value=\"{$this->label}\"></div>";
     }
 }
