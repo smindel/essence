@@ -11,7 +11,7 @@ abstract class Controller extends Base
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $data = $this->handleAction($request->methodname, $request->parameters);
+        $data = $this->handleAction($request->getMethodname(), $request->getParameters());
 
         if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);
 
