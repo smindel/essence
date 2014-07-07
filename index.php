@@ -36,7 +36,8 @@ define('BASE_PATH', dirname($_SERVER["SCRIPT_FILENAME"]));
 define('BASE_URL', 'http://' . $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) . '/');
 set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);
 
-Builder::$managed_models = Admin::$managed_models = array('User', 'Client');
+Builder::$managed_models = array('User', 'Client', 'Invoice');
+Admin::$managed_models = array('User', 'Client', 'Invoice');
 
 Request::$default_controller_class = 'Index';
 Request::create($_SERVER["REQUEST_URI"])->handle();

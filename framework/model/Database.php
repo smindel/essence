@@ -13,11 +13,12 @@ class Database
         return self::$_conn;
     }
 
-    public static function create($table, $specs)
+    public static function create_table($table, $specs)
     {
         $def = array();
         foreach ($specs as $key => $val) {
             $val = self::spec($val);
+            if ($val === false) continue;
             $def[] = $val == 'auto' ? "\"{$key}\"" : "\"{$key}\" $val";
         }
         Database::conn()->query("CREATE TABLE IF NOT EXISTS \"{$table}\" (" . implode(', ', $def) . ")");
@@ -30,7 +31,9 @@ class Database
             case 'ID': return 'INTEGER PRIMARY KEY AUTOINCREMENT';
             case 'DATE': return 'DATE';
             case 'DATETIME': return 'DATETIME';
+            case 'BOOL': return 'BOOLEAN';
             case 'FOREIGN': return "INTEGER REFERENCES {$param1}(id) ON DELETE " . ($param2 ?: 'SET NULL');
+            case 'LOOKUP': return false;
         }
     }
 
@@ -77,21 +80,43 @@ class Database
         return $cols;
     }
 
-    public static function replace($table, $values)
+    public static function insert($table, $values)
     {
         $params = $keys = array();
         foreach ($values as $key => $val) {
+            if ($key == 'id') continue;
             $keys["\"{$key}\""] = ":{$key}";
             $params[':' . $key] = $val;
         }
-        $sql = 'REPLACE INTO "' . $table . '" (' . implode(', ', array_keys($keys)) . ') VALUES (' . implode(', ', array_values($keys)) . ')';
+        $sql = 'INSERT INTO "' . $table . '" (' . implode(', ', array_keys($keys)) . ') VALUES (' . implode(', ', array_values($keys)) . ')';
         $sth = self::conn()->prepare($sql);
         if (!$sth) {
             throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
         } else {
             $sth->execute($params);
             if(self::conn()->errorInfo()[2]) {
-                throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+                throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ') , ' . print_r($params, true));
+            }
+            return self::conn()->lastInsertId() ?: $values['id'];
+        }
+    }
+
+    public static function update($table, $values)
+    {
+        $params = $keys = array();
+        foreach ($values as $key => $val) {
+            $params[':' . $key] = $val;
+            if ($key == 'id') continue;
+            $keys[] = "\"{$key}\" = :{$key}";
+        }
+        $sql = 'UPDATE "' . $table . '" SET ' . implode(', ', $keys) . ' WHERE "id" = :id';
+        $sth = self::conn()->prepare($sql);
+        if (!$sth) {
+            throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+        } else {
+            $sth->execute($params);
+            if(self::conn()->errorInfo()[2]) {
+                throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ') , ' . print_r($params, true));
             }
             return self::conn()->lastInsertId() ?: $values['id'];
         }

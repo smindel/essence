@@ -17,17 +17,15 @@ class Model extends Base
         ),
     );
     
-    public static function db($valtype = 'value', $keytype = 'raw')
+    public function db($valtype = 'value', $keytype = 'raw')
     {
         $args = func_get_args();
-        $class = get_called_class();
-        if ($class == 'Model') $class = array_shift($args);
-        $object = $class::create();
+        $class = get_class($this);
         $valtype = array_shift($args);
         $keytype = array_shift($args);
         $defaults = array('type' => 'auto', 'field' => null, 'value' => null);
         $db = array();
-        foreach ($object->db as $col => $options) {
+        foreach ($this->db as $col => $options) {
             $defaults['label'] = $col;
             switch ($keytype) {
                 case 'colon': $key = ':' . $col; break;
@@ -50,14 +48,23 @@ class Model extends Base
     public function options($field)
     {
         list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
-        $options = $param1::get();
-        if ($param2 == 'SET NULL') array_unshift($options, $param1::create());
+        if ($metatype == 'FOREIGN') {
+            $options = $param1::get();
+            if ($param2 == 'SET NULL') array_unshift($options, $param1::create());
+        } else if ($metatype == 'LOOKUP') {
+            $options = $param1::get();
+        }
         return $options;
     }
 
     public function option($field)
     {
-        foreach ($this->options($field) as $option) if ($option->id == $this->$field) return $option;
+        list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
+        if ($metatype == 'FOREIGN') {
+            foreach ($this->options($field) as $option) if ($option->id == $this->$field) return $option;
+        } else if ($metatype == 'LOOKUP') {
+            return $param2;
+        }
     }
 
     public static function _base_class()
@@ -161,11 +168,18 @@ class Model extends Base
     public function write()
     {
         if (method_exists($this, 'beforeWrite')) if (!$this->beforeWrite()) return $this;
-        foreach ($this->db as $name => $field) {
-            if (!isset($field['value']) || $name == 'id' && !is_numeric($field['value'])) continue;
-            $props[$name] = $field['value'];
+
+        $values = array();
+        foreach ($this->db as $key => $options) {
+            if (!isset($options['value']) || Database::spec($options['field']) === false) continue;
+            $values[$key] = $options['value'];
         }
-        $this->db['id']['value'] = Database::replace(self::_base_class(), $props);
+
+        if ($this->id) {
+            if (count($values)) Database::update(self::_base_class(), $values);
+        } else {
+            $this->db['id']['value'] = Database::insert(self::_base_class(), $values);
+        }
         if (method_exists($this, 'afterWrite')) $this->afterWrite();
         return $this;
     }
