@@ -108,7 +108,7 @@ class Admin extends Controller
 
     public function form_delete(Form $form)
     {
-        $object = $form->object;
+        $object = $form->getObject();
         $modelclass = get_class($object);
         $object->delete();
         $this->redirect($this->link('index', $modelclass));

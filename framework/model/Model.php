@@ -45,29 +45,7 @@ class Model extends Base
         return $db;
     }
 
-    // public function options($field)
-    // {
-    //     list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
-    //     if ($metatype == 'FOREIGN') {
-    //         $options = $param1::get();
-    //         if ($param2 == 'SET NULL') array_unshift($options, $param1::create());
-    //     } else if ($metatype == 'LOOKUP') {
-    //         $options = $param1::get();
-    //     }
-    //     return $options;
-    // }
-    //
-    // public function option($field)
-    // {
-    //     list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
-    //     if ($metatype == 'FOREIGN') {
-    //         foreach ($this->options($field) as $option) if ($option->id == $this->$field) return $option;
-    //     } else if ($metatype == 'LOOKUP') {
-    //         return $param2;
-    //     }
-    // }
-
-    public static function _base_class()
+    public static function base_class()
     {
         $class = get_called_class();
         if ($class == 'Model') throw new Exception('Cannot find base for class Model');
@@ -81,7 +59,7 @@ class Model extends Base
 
     public function getFields()
     {
-        $fields = array('SecurityID' => SecurityTokenFormField::create('SecurityID'));
+        $fields = Collection::create(array('SecurityID' => SecurityTokenFormField::create('SecurityID')));
         foreach ($this->db as $key => $options) {
             if (empty($options['field'])) continue;
             list($fieldclass) = explode(':', $options['field']);
@@ -112,7 +90,7 @@ class Model extends Base
         $modelclass = get_called_class();
         if ($modelclass == 'Model') $modelclass == array_shift($args);
         $list = call_user_func_array(array($modelclass, 'get'), $args);
-        return count($list) ? array_shift($list) : false;
+        return $list->count() ? $list->shift() : false;
     }
 
     public static function get()
@@ -126,10 +104,11 @@ class Model extends Base
             case 2: $filter = array($args[0] => $args[1]); break;
         }
         $list = array();
-        foreach (Database::select($modelclass::_base_class(), $filter) as $record) {
-            $list[] = $modelclass::create()->hydrate($record);
+        foreach (Database::select($modelclass::base_class(), $filter) as $record) {
+            $object = $modelclass::create()->hydrate($record);
+            $list[$object->id] = $object;
         }
-        return $list;
+        return Collection::create($list);
     }
 
     public function __get($key)
@@ -227,9 +206,9 @@ class Model extends Base
         }
 
         if ($this->id) {
-            if (count($values)) Database::update(self::_base_class(), $values);
+            if (count($values)) Database::update(self::base_class(), $values);
         } else {
-            $this->db['id']['value'] = Database::insert(self::_base_class(), $values);
+            $this->db['id']['value'] = Database::insert(self::base_class(), $values);
         }
         if (method_exists($this, 'afterWrite')) $this->afterWrite();
         return $this;
@@ -238,7 +217,7 @@ class Model extends Base
     public function delete()
     {
         if (method_exists($this, 'beforeDelete')) if (!$this->beforeDelete()) return $this;
-        Database::delete(self::_base_class(), $this->db['id']['value']);
+        Database::delete(self::base_class(), $this->db['id']['value']);
         unset($this->db['id']['value']);
         if (method_exists($this, 'afterDelete')) $this->afterDelete();
         return $this;

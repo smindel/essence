@@ -18,7 +18,7 @@ class Builder extends Controller
         $tables = Database::tables();
         foreach (self::$managed_models as $modelclass) {
             $model = $modelclass::create();
-            $base = $modelclass::_base_class();
+            $base = $modelclass::base_class();
             if (!in_array($modelclass, $tables)) {
                 $specs = array();
                 Database::create_table($base, $model->db('type'));
