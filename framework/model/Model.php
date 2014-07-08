@@ -84,7 +84,7 @@ class Model extends Base
         $fields = array('SecurityID' => SecurityTokenFormField::create('SecurityID'));
         foreach ($this->db as $key => $options) {
             if (empty($options['field'])) continue;
-            $fieldclass = $options['field'];
+            list($fieldclass) = explode(':', $options['field']);
             $fields[$key] = $fieldclass::create(
                 $key,
                 isset($options['label']) ? $options['label'] : $key,

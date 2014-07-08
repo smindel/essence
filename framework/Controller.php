@@ -4,6 +4,8 @@ abstract class Controller extends Base
 {
     protected static $_curr;
 
+    protected $request;
+
     public function handleRequest($request)
     {
         self::$_curr = $this;
@@ -51,5 +53,10 @@ abstract class Controller extends Base
     public static function curr()
     {
         return self::$_curr;
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
     }
 }

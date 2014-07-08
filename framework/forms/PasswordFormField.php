@@ -7,7 +7,7 @@ class PasswordFormField extends FormField
         $this->value = self::crypt($val);
     }
 
-    public function __toString()
+    public function html()
     {
         return '<div class="field ' . get_class($this) . '"><div>' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"\"></div>";
     }
