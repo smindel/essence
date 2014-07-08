@@ -45,27 +45,27 @@ class Model extends Base
         return $db;
     }
 
-    public function options($field)
-    {
-        list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
-        if ($metatype == 'FOREIGN') {
-            $options = $param1::get();
-            if ($param2 == 'SET NULL') array_unshift($options, $param1::create());
-        } else if ($metatype == 'LOOKUP') {
-            $options = $param1::get();
-        }
-        return $options;
-    }
-
-    public function option($field)
-    {
-        list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
-        if ($metatype == 'FOREIGN') {
-            foreach ($this->options($field) as $option) if ($option->id == $this->$field) return $option;
-        } else if ($metatype == 'LOOKUP') {
-            return $param2;
-        }
-    }
+    // public function options($field)
+    // {
+    //     list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
+    //     if ($metatype == 'FOREIGN') {
+    //         $options = $param1::get();
+    //         if ($param2 == 'SET NULL') array_unshift($options, $param1::create());
+    //     } else if ($metatype == 'LOOKUP') {
+    //         $options = $param1::get();
+    //     }
+    //     return $options;
+    // }
+    //
+    // public function option($field)
+    // {
+    //     list($metatype, $param1, $param2) = explode(':', $this->db('type')[$field] . ':SET NULL');
+    //     if ($metatype == 'FOREIGN') {
+    //         foreach ($this->options($field) as $option) if ($option->id == $this->$field) return $option;
+    //     } else if ($metatype == 'LOOKUP') {
+    //         return $param2;
+    //     }
+    // }
 
     public static function _base_class()
     {
@@ -134,15 +134,48 @@ class Model extends Base
 
     public function __get($key)
     {
-        if (!isset($this->db[$key])) throw new Exception("Undefined property '" . get_class($this) . "->$key'");
-        return isset($this->db[$key]['value']) ? $this->db[$key]['value'] : null;
+        if (method_exists($this, ($method = 'get' . $key))) {
+            return $this->$method();
+        } else if (isset($this->db[$key])) {
+            list($metatype, $class, $param) = explode(':', $this->db('type')[$key] . ':SET NULL:');
+            if ($metatype == 'FOREIGN') {
+                return isset($this->db[$key]['value']) ? $class::one($this->db[$key]['value']) : null;
+            } else if ($metatype == 'LOOKUP') {
+                return $this->db['id']['value'] ? $class::get($param, $this->db['id']['value']) : null;
+            } else {
+                return isset($this->db[$key]['value']) ? $this->db[$key]['value'] : null;
+            }
+        } else {
+            throw new Exception("Undefined property '" . get_class($this) . "->$key'");
+        }
     }
 
     public function __set($key, $val)
     {
-        if ($key == 'id') throw new Exception("Cannot set property '" . get_class($this) . "->$key'");
-        if (!isset($this->db[$key])) throw new Exception("Undefined property '" . get_class($this) . "->$key'");
-        $this->db[$key]['value'] = $val;
+        if (method_exists($this, ($method = 'set' . $key))) {
+            $this->$method($val);
+        } else if ($key == 'id') {
+            throw new Exception("Cannot set property '" . get_class($this) . "->$key'");
+        } else if (isset($this->db[$key])) {
+            list($metatype, $class, $param) = explode(':', $this->db('type')[$field] . ':SET NULL');
+            if ($metatype == 'FOREIGN') {
+                if ($val instanceof $class) {
+                    if ($val->id) {
+                        $this->db[$key]['value'] = $val->id;
+                    } else {
+                        throw new Exception("Related Object has to be saved first: '" . get_class($this) . "->$key'");
+                    }
+                } else {
+                    throw new Exception("You cannot set value on has many relation '" . get_class($this) . "->$key'");
+                }
+            } else if ($metatype == 'LOOKUP') {
+                throw new Exception("You cannot set value on has many relation '" . get_class($this) . "->$key'");
+            } else {
+                $this->db[$key]['value'] = $val;
+            }
+        } else {
+            throw new Exception("Undefined property '" . get_class($this) . "->$key'");
+        }
     }
 
     public function __unset($key)
@@ -154,6 +187,24 @@ class Model extends Base
     public function __isset($key)
     {
         return isset($this->db[$key]) && isset($this->db[$key]['value']);
+    }
+
+    public function __call($key, $args)
+    {
+        if (isset($this->db[$key])) {
+            list($metatype, $class, $param) = explode(':', $this->db('type')[$key] . ':SET NULL');
+            if ($metatype == 'FOREIGN') {
+                $options = $class::get();
+                if ($param == 'SET NULL') array_unshift($options, $class::create());
+                return $options;
+            } else if ($metatype == 'LOOKUP') {
+                return $class::get();
+            } else {
+                throw new Exception("Undefined method '" . get_class($this) . "->$key'");
+            }
+        } else {
+            throw new Exception("Undefined method '" . get_class($this) . "->$key'");
+        }
     }
 
     public function hydrate($record)
