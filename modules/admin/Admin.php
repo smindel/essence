@@ -75,6 +75,7 @@ class Admin extends Controller
             );
         }
         return array(
+            'Model' => $model,
             'Me' => $this,
             'Links' => $links,
         );

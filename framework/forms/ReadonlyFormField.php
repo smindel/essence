@@ -23,6 +23,6 @@ class ReadonlyFormField extends FormField
         } else {
             $value = '<div>' . $this->value . '</div>';
         }
-        return '<div class="field ' . get_class($this) . '"><div>' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label>{$value}</div>";
+        return '<div class="field ' . get_class($this) . "\"><label for=\"{$this->name}\">{$this->label}</label>{$value}</div>";
     }
 }

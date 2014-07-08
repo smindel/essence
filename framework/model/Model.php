@@ -141,7 +141,7 @@ class Model extends Base
             if ($metatype == 'FOREIGN') {
                 return isset($this->db[$key]['value']) ? $class::one($this->db[$key]['value']) : null;
             } else if ($metatype == 'LOOKUP') {
-                return $this->db['id']['value'] ? $class::get($param, $this->db['id']['value']) : null;
+                return isset($this->db['id']['value']) ? $class::get($param, $this->db['id']['value']) : array();
             } else {
                 return isset($this->db[$key]['value']) ? $this->db[$key]['value'] : null;
             }

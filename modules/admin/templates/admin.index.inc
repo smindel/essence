@@ -6,7 +6,7 @@
     <link href='static/admin.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
-<h1>Index</h1>
+<h1>Hauptmenü</h1>
 <ul>
     {{foreach ($Links as $url => $label):}}
         <li class="list"><a href="{{{$url}}}">{{{$label}}}</a></li>

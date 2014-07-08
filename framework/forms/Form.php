@@ -99,6 +99,7 @@ class Form extends Base
 
     public function redirectBack()
     {
-        aDebug($this->dependencies['constructor'], $this->dependencies['object']);die();
+        $this->constructor[0]->redirect($_SERVER['HTTP_REFERER']);
+        die();
     }
 }

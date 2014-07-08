@@ -17,7 +17,7 @@ class TextFormField extends FormField
 
     public function html()
     {
-        $html = '<div class="field ' . get_class($this) . '"><div>' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label>";
+        $html = '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label>";
         if ($this->getRows() == 1) {
             $html .= "<input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"{$this->value}\">";
         } else {
