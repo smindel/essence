@@ -50,11 +50,11 @@ class Authentication extends Controller
 
         if ($user && $valid) {
             $this->login($user);
+            $this->redirect($_SESSION['authentication_redirect']);
         } else {
             $fields['Name']->setError('Login oder Passwort falsch');
             $this->redirectBack();
         }
-        $this->redirect($_SESSION['authentication_redirect']);
     }
 
     public function logout_action()
