@@ -6,26 +6,17 @@ class Form extends Base
     protected $fields;
     protected $object;
 
-    public function __construct($fields)
+    public function __construct($fields, $controller, $method, $object = null)
     {
-        $backtrace = debug_backtrace();
-        // aDebug($backtrace);
-        $relevanttrace = $backtrace[3];
-        $constructor = array($relevanttrace['object'], $relevanttrace['function']);
-        if (
-            is_array($relevanttrace['args']) &&
-            count($relevanttrace['args']) &&
-            is_subclass_of($relevanttrace['args'][0], 'Model', true)
-        ) {
-            $modelclass = array_shift($relevanttrace['args']);
-            $objectid = count($relevanttrace['args']) && is_numeric($relevanttrace['args'][0]) ? (int)$relevanttrace['args'][0] : null;
-            $object = $modelclass::one($objectid) ?: $modelclass::create();
-        } else {
-            $object = null;
+        if (is_array($fields)) {
+            $fieldcollection = Collection::create();
+            foreach ($fields as $field) $fieldcollection[$field->getName()] = $field;
+        } else if ($fields instanceof Collection){
+            $fieldcollection = $fields;
         }
 
-        $this->constructor = $constructor;
-        $this->fields = $fields;
+        $this->constructor = array($controller, $method);
+        $this->fields = $fieldcollection;
         $this->object = $object;
 
         foreach ($fields as $field) $field->setForm($this);
@@ -83,7 +74,7 @@ class Form extends Base
         return View::create(get_class($this), $method)->render($data);
     }
 
-    public function __toString()
+    public function html()
     {
         return $this->render('index', array('Me' => $this));
     }

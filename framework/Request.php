@@ -37,4 +37,16 @@ class Request extends Base
     {
         return Base::create($this->controllerclass)->handleRequest($this);
     }
+
+    public static function relative_url($uri)
+    {
+        if (substr($uri, 0, 4) == 'http' && substr($uri, 0, strlen(BASE_URL)) == BASE_URL) return substr($uri, strlen(BASE_URL));
+        return $uri;
+    }
+
+    public static function absolute_url($uri)
+    {
+        if (substr($uri, 0, 4) != 'http') return BASE_URL . $uri;
+        return $uri;
+    }
 }

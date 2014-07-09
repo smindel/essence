@@ -64,6 +64,7 @@ abstract class FormField extends Base
             'datetime',
             'email',
             'hidden',
+            'number',
             'password',
             'submit',
             'text',

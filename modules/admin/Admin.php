@@ -6,47 +6,8 @@ class Admin extends Controller
 
     public function beforeHandle($request)
     {
-        if (!empty($_SESSION['user']) || in_array($request->methodname, array('login', 'loginform'))) return;
-        $_SESSION['login_redirect'] = $_SERVER['REQUEST_URI'];
-        $this->redirect($this->link('login'));
-    }
-
-    public function login_action() {
-        return array(
-            'Form' => $this->loginform_action(),
-        );
-    }
-
-    public function loginform_action()
-    {
-        $form = Form::create(array(
-            SecurityTokenFormField::create(),
-            TextFormField::create('Name'),
-            PasswordFormField::create('Password'),
-            SubmitFormField::create('loginform_login', 'login'),
-        ));
-        return $form->setData($_REQUEST);
-    }
-
-    public function loginform_login(Form $form)
-    {
-        $data = $form->getData();
-        $user = User::one('Name', $data['Name']);
-        $valid = $data['Password'] == $user->Password;
-        
-        if ($user && $valid) {
-            $_SESSION['user'] = $user->id;
-        } else {
-            $form->fields[1]->setError('Login oder Passwort falsch');
-            $this->redirectBack();
-        }
-        $this->redirect($_SESSION['login_redirect']);
-    }
-
-    public function logout_action()
-    {
-        unset($_SESSION['user']);
-        $this->redirectBack();
+        if (User::curr()) return;
+        Authentication::challenge();
     }
 
     public function index_action() {
@@ -81,9 +42,8 @@ class Admin extends Controller
         );
     }
 
-    public function edit_action() {
-        $model = func_get_arg(0);
-        $id = func_num_args() > 1 ? func_get_arg(1) : 0;
+    public function edit_action($model, $id = null) {
+
         return array(
             'Me' => $this,
             'Form' => $this->form_action($model, $id),
@@ -94,7 +54,7 @@ class Admin extends Controller
     {
         $object = $model::one((int)$id) ?: $model::create();
         $fields = $object->getFields();
-        $form = Form::create($fields)->setData($_REQUEST);
+        $form = Form::create($fields, $this, __FUNCTION__, $object)->setData($_REQUEST);
         // load data from object, then merge in data from previous submission
         return $form;
     }
