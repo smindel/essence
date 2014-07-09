@@ -70,12 +70,27 @@ class Model extends Base
             );
         }
         if ($this->id) {
-            $fields['form_save'] = SubmitFormField::create('form_save', 'ändern');
-            $fields['form_delete'] = SubmitFormField::create('form_delete', 'löschen');
+            if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'ändern');
+            if ($this->canDelete()) $fields['form_delete'] = SubmitFormField::create('form_delete', 'löschen');
         } else {
-            $fields['form_save'] = SubmitFormField::create('form_save', 'erstellen');
+            if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'erstellen');
         }
         return $fields;
+    }
+
+    public function canRead()
+    {
+        return true;
+    }
+
+    public function canWrite()
+    {
+        return true;
+    }
+
+    public function canDelete()
+    {
+        return true;
     }
 
     public function title()
@@ -106,7 +121,7 @@ class Model extends Base
         $list = array();
         foreach (Database::select($modelclass::base_class(), $filter) as $record) {
             $object = $modelclass::create()->hydrate($record);
-            $list[$object->id] = $object;
+            if($object->canRead()) $list[$object->id] = $object;
         }
         return Collection::create($list);
     }
@@ -197,6 +212,8 @@ class Model extends Base
 
     public function write()
     {
+        if (!$this->canWrite()) throw new Exception("You cannot write");
+
         if (method_exists($this, 'beforeWrite')) if (!$this->beforeWrite()) return $this;
 
         $values = array();
@@ -216,6 +233,8 @@ class Model extends Base
 
     public function delete()
     {
+        if (!$this->canDelete()) throw new Exception("You cannot delete");
+
         if (method_exists($this, 'beforeDelete')) if (!$this->beforeDelete()) return $this;
         Database::delete(self::base_class(), $this->db['id']['value']);
         unset($this->db['id']['value']);

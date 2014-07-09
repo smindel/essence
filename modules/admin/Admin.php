@@ -44,19 +44,14 @@ class Admin extends Controller
 
     public function edit_action($model, $id = null) {
 
-        return array(
-            'Me' => $this,
-            'Form' => $this->form_action($model, $id),
-        );
-    }
-
-    public function form_action($model, $id = null)
-    {
         $object = $model::one((int)$id) ?: $model::create();
         $fields = $object->getFields();
         $form = Form::create($fields, $this, __FUNCTION__, $object)->setData($_REQUEST);
-        // load data from object, then merge in data from previous submission
-        return $form;
+
+        return array(
+            'Me' => $this,
+            'Form' => $form,
+        );
     }
 
     public function form_save(Form $form)

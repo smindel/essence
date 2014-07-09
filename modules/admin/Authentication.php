@@ -25,20 +25,16 @@ class Authentication extends Controller
     }
 
     public function login_action() {
-        return array(
-            'Form' => $this->loginform_action(),
-        );
-    }
-
-    public function loginform_action()
-    {
         $form = Form::create(array(
             SecurityTokenFormField::create('SecurityID'),
             TextFormField::create('Name'),
             PasswordFormField::create('Password'),
             SubmitFormField::create('loginform_login', 'login'),
-        ), $this, __FUNCTION__);
-        return $form->setData($_REQUEST);
+        ), $this, __FUNCTION__)->setData($_REQUEST);
+
+        return array(
+            'Form' => $form,
+        );
     }
 
     public function loginform_login(Form $form)
