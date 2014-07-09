@@ -13,19 +13,4 @@ class User extends Model
     {
         return $this->Name;
     }
-
-    public function login()
-    {
-        $_SESSION['user'] = $this->id;
-    }
-
-    public function logout()
-    {
-        unset($_SESSION['user']);
-    }
-
-    public static function curr()
-    {
-        if (isset($_SESSION['user'])) return self::one($_SESSION['user']);
-    }
 }

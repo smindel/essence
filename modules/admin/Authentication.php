@@ -9,6 +9,21 @@ class Authentication extends Controller
         $auth->redirect($auth->link('login'));
     }
 
+    public function login(User $user)
+    {
+        $_SESSION['user'] = $user->id;
+    }
+
+    public function logout()
+    {
+        unset($_SESSION['user']);
+    }
+
+    public static function user()
+    {
+        if (isset($_SESSION['user'])) return User::one($_SESSION['user']);
+    }
+
     public function login_action() {
         return array(
             'Form' => $this->loginform_action(),
@@ -34,7 +49,7 @@ class Authentication extends Controller
         $fields = $form->getFields();
 
         if ($user && $valid) {
-            $user->login();
+            $this->login($user);
         } else {
             $fields['Name']->setError('Login oder Passwort falsch');
             $this->redirectBack();
@@ -44,7 +59,7 @@ class Authentication extends Controller
 
     public function logout_action()
     {
-        if (($user = User::curr())) $user->logout();
+        if (($user = self::user())) $this->logout($user);
         if (empty($_SERVER['HTTP_REFERER']) || Request::absolute_url($_SERVER['HTTP_REFERER']) == Request::absolute_url($_SERVER['REQUEST_URI'])) {
             $this->redirect($this->link('login'));
         } else {

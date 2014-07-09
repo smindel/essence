@@ -6,7 +6,7 @@ class Admin extends Controller
 
     public function beforeHandle($request)
     {
-        if (User::curr()) return;
+        if (Authentication::user()) return;
         Authentication::challenge();
     }
 
