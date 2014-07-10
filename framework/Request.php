@@ -49,4 +49,10 @@ class Request extends Base
         if (substr($uri, 0, 4) != 'http') return BASE_URL . $uri;
         return $uri;
     }
+
+    public function isAjax()
+    {
+        if (!empty($_REQUEST['forceajax'])) return true;
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    }
 }

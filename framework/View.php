@@ -2,12 +2,10 @@
 
 class View extends Base
 {
-    protected $class;
     protected $template;
 
-    public function __construct($class, $template)
+    public function __construct($template)
     {
-        $this->class = $class;
         $this->template = $template;
     }
 
@@ -15,18 +13,30 @@ class View extends Base
     {
         extract((array)$data);
         ob_start();
-        require($this->template());
+        require($this->compile());
         return ob_get_clean();
     }
 
-    public function template()
+    public static function exists($name)
     {
+        return (bool)self::create($name)->findTemplate();
+    }
+
+    protected function findTemplate()
+    {
+        $template = false;
         $searchpaths = array('project', 'modules', 'framework');
         while (empty($template) && ($searchpath = array_shift($searchpaths))) {
-            $pattern = "{$this->class}.{$this->template}.inc";
+            $pattern = "{$this->template}.inc";
             $template = Finder::find($pattern, $searchpath);
         }
-        if (!$template) throw new Exception("No template found for '{$this->class}:{$this->template}'");
+        return $template;
+    }
+
+    protected function compile()
+    {
+        $template = $this->findTemplate();
+        if (!$template) throw new Exception("No template found for '{$this->template}'");
 
         $cachedtemplate = 'cache' . DIRECTORY_SEPARATOR . str_replace(DIRECTORY_SEPARATOR, '.', $template);
 

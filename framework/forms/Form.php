@@ -69,14 +69,9 @@ class Form extends Base
         return $data;
     }
 
-    public function render($method, $data)
-    {
-        return View::create(get_class($this), $method)->render($data);
-    }
-
     public function html()
     {
-        return $this->render('index', array('Me' => $this));
+        return Collection::create(array('Me' => $this))->renderWith('form');
     }
 
     public function action()

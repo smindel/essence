@@ -31,7 +31,24 @@ abstract class Controller extends Base
 
     public function render($method, $data)
     {
-        return View::create(get_class($this), $method)->render($data);
+        $output = View::create($this->getLayout($method))->render($data);
+        if (!$this->getRequest()->isAjax() && ($layout = $this->getLayout())) {
+            $data['_CONTENT_'] = $output;
+            $output = View::create($layout)->render($data);
+        }
+        return $output;
+    }
+
+    public function getLayout($method = 'LAYOUT')
+    {
+        $i = 0;
+        $class = get_class($this);
+        $template = $class . '.' . $method;
+        while (!($exists = View::exists($template)) && $class && $i < 5) {
+            $class = get_parent_class($class);
+            $template = $class . '.' . $method;
+        }
+        return $exists ? $template : false;
     }
 
     public function redirect($url, $code = 302)
