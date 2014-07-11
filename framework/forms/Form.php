@@ -30,18 +30,18 @@ class Form extends Base
         return $this->fields;
     }
 
-    public function handleSubmission($data)
+    public function handleSubmission($request)
     {
         $error = $callback = false;
         foreach ($this->fields as $field) {
-            $submittedvalue = isset($data[$field->getName()]) ? $data[$field->getName()] : null;
+            $submittedvalue = $request->getRaw($field->getName());;
             if ($field instanceof SubmitFormField && isset($submittedvalue)) {
                 $callback = array($this->controller, $field->getName());
             }
         }
 
         if ($callback) foreach ($this->fields as $field) {
-            $submittedvalue = isset($data[$field->getName()]) ? $data[$field->getName()] : null;
+            $submittedvalue = $request->getRaw($field->getName());
             if (!$field->validate($submittedvalue)) {
                 $field->setError('Validation failed');
                 $error = true;

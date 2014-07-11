@@ -53,7 +53,7 @@ class Admin extends Controller
         $this->object = $model::one($id) ?: $model::create();
         $fields = $this->object->getFields();
         $form = Form::create('record', $fields, $this, __FUNCTION__);
-        $form->handleSubmission($_REQUEST);
+        $form->handleSubmission($this->request);
         $form->setAction($this->link('edit', $model, $id));
 
         return array(

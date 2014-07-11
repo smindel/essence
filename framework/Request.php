@@ -5,13 +5,15 @@ class Request extends Base
     public static $default_controller_class = 'DefaultController';
 
     protected $requesturi;
+    protected $requestdata;
     protected $availablesegments;
     protected $consumedsegments = array();
 
-    public function __construct($requesturi)
+    public function __construct($requesturi = null, $requestdata = null)
     {
-        $this->requesturi = $requesturi;
-        $this->availablesegments = explode('/', parse_url($requesturi, PHP_URL_PATH));
+        $this->requesturi = $requesturi ?: self::relative_url(self::absolute_url($_SERVER["REQUEST_URI"], true));;
+        $this->requestdata = $requestdata ?: $_REQUEST;
+        $this->availablesegments = explode('/', parse_url($this->requesturi, PHP_URL_PATH));
     }
 
     public function consume($numsegments = false)
@@ -52,7 +54,12 @@ class Request extends Base
 
     public function isAjax()
     {
-        if (!empty($_REQUEST['forceajax'])) return true;
+        if ($this->getRaw('forceajax')) return true;
         return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    }
+
+    public function getRaw($name)
+    {
+        return isset($this->requestdata[$name]) ? $this->requestdata[$name] : null;
     }
 }
