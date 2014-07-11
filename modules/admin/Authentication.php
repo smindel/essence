@@ -30,7 +30,7 @@ class Authentication extends Controller
             TextFormField::create('Name'),
             PasswordFormField::create('Password'),
             SubmitFormField::create('loginform_login', 'login'),
-        ), $this, __FUNCTION__)->setData($_REQUEST);
+        ), $this, __FUNCTION__)->handleSubmission($_REQUEST);
 
         return array(
             'Form' => $form,

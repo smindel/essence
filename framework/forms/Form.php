@@ -32,7 +32,7 @@ class Form extends Base
         return $this->fields;
     }
 
-    public function setData($data)
+    public function handleSubmission($data)
     {
         $error = $callback = false;
         foreach ($this->fields as $field) {

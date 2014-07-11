@@ -1,3 +1,7 @@
+php_value xdebug.profiler_enable 0
+php_value xdebug.profiler_append 0
+php_value xdebug.profiler_output_dir ./xdebug
+
 <IfModule mod_rewrite.c>
     SetEnv HTTP_MOD_REWRITE On
     RewriteEngine On

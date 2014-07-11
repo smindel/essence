@@ -193,11 +193,9 @@ class Model extends Base
                 return $options;
             } else if ($metatype == 'LOOKUP') {
                 return $class::get();
-            } else {
-                throw new Exception("Undefined method '" . get_class($this) . "->$key'");
             }
         } else {
-            throw new Exception("Undefined method '" . get_class($this) . "->$key'");
+            return call_user_func_array('parent::__call', func_get_args());
         }
     }
 
