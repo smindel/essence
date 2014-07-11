@@ -53,7 +53,7 @@ abstract class FormField extends Base
 
     public function getId()
     {
-        return str_replace('/', '_', $this->form->action() . '_' . $this->name);
+        return str_replace('/', '_', $this->form->getAction() . '_' . $this->name);
     }
 
     public function getHtmlType()

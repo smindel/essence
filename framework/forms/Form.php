@@ -2,12 +2,15 @@
 
 class Form extends Base
 {
-    protected $constructor;
+    protected $name;
+    protected $controller;
+    protected $method;
     protected $fields;
-    protected $object;
+    protected $action;
 
-    public function __construct($fields, $controller, $method, $object = null)
+    public function __construct($name, $fields, $controller, $method)
     {
+        $this->name = $name;
         if (is_array($fields)) {
             $fieldcollection = Collection::create();
             foreach ($fields as $field) $fieldcollection[$field->getName()] = $field;
@@ -15,16 +18,11 @@ class Form extends Base
             $fieldcollection = $fields;
         }
 
-        $this->constructor = array($controller, $method);
+        $this->controller = $controller;
+        $this->method = $method;
         $this->fields = $fieldcollection;
-        $this->object = $object;
 
         foreach ($fields as $field) $field->setForm($this);
-    }
-
-    public function getObject()
-    {
-        return $this->object;
     }
 
     public function getFields()
@@ -38,7 +36,7 @@ class Form extends Base
         foreach ($this->fields as $field) {
             $submittedvalue = isset($data[$field->getName()]) ? $data[$field->getName()] : null;
             if ($field instanceof SubmitFormField && isset($submittedvalue)) {
-                $callback = array($this->constructor[0], $field->getName());
+                $callback = array($this->controller, $field->getName());
             }
         }
 
@@ -69,23 +67,35 @@ class Form extends Base
         return $data;
     }
 
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    public function getObject()
+    {
+        return $this->getController()->getObject();
+    }
+
+    public function setAction($action)
+    {
+        $this->action = $action;
+        return $this;
+    }
+
+    public function getAction()
+    {
+        return Request::absolute_url($_SERVER['REQUEST_URI'], true);
+    }
+
     public function html()
     {
         return Collection::create(array('Me' => $this))->renderWith('form');
     }
 
-    public function action()
-    {
-        $action = get_class($this->constructor[0]) . '/' . substr($this->constructor[1], 0, -7);
-        if (isset($this->object)) {
-            $action .= '/' . get_class($this->object) . '/' . $this->object->id;
-        }
-        return $action;
-    }
-
     public function redirectBack()
     {
-        $this->constructor[0]->redirect($_SERVER['HTTP_REFERER']);
+        $this->controller->redirect($_SERVER['HTTP_REFERER']);
         die();
     }
 }

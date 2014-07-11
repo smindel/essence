@@ -14,10 +14,9 @@ class ReadonlyFormField extends FormField
             $metatype = false;
         }
         if ($metatype == 'LOOKUP') {
-            $linkbase = get_class(Controller::curr()) . DIRECTORY_SEPARATOR . Controller::curr()->getRequest()->getMethodname() . DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR;
-            $values = in_array('add', $actions) ? array('<li class="create"><a href="' . $linkbase . '0">' . $class . ' erstellen</a></li>') : array();
+            $values = in_array('add', $actions) ? array('<li class="create"><a href="' . $class::create()->link() . '">' . $class . ' erstellen</a></li>') : array();
             foreach ($object->$name as $option) {
-                $values[] = '<li class="edit"><a href="' . $linkbase . $option->id . '">' . $option->title() . '</a></li>';
+                $values[] = '<li class="edit"><a href="' . $option->link() . '">' . $option->title() . '</a></li>';
             }
             $value = "<ul id=\"{$this->name}\">" . implode($values) . '</ul>';
         } else {

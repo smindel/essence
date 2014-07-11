@@ -4,11 +4,18 @@ class Admin extends Controller
 {
     public static $managed_models = array();
 
+    protected $object;
+
     public function beforeHandle($request)
     {
         Resources::add('static/admin.css');
         if (Authentication::user()) return;
         Authentication::challenge();
+    }
+
+    public function getObject()
+    {
+        return $this->object;
     }
 
     public function index_action() {
@@ -22,8 +29,7 @@ class Admin extends Controller
         );
     }
 
-    public function list_action() {
-        $model = func_get_arg(0);
+    public function list_action($model) {
         $links = array(array(
             'link' => $this->link('edit', $model),
             'title' => "{$model} erstellen",
@@ -44,10 +50,11 @@ class Admin extends Controller
     }
 
     public function edit_action($model, $id = null) {
-
-        $object = $model::one((int)$id) ?: $model::create();
-        $fields = $object->getFields();
-        $form = Form::create($fields, $this, __FUNCTION__, $object)->handleSubmission($_REQUEST);
+        $this->object = $model::one($id) ?: $model::create();
+        $fields = $this->object->getFields();
+        $form = Form::create('record', $fields, $this, __FUNCTION__);
+        $form->handleSubmission($_REQUEST);
+        $form->setAction($this->link('edit', $model, $id));
 
         return array(
             'Me' => $this,
@@ -57,16 +64,13 @@ class Admin extends Controller
 
     public function form_save(Form $form)
     {
-        $object = $form->getObject();
-        $object->hydrate($form->getData())->write();
-        $this->redirect($this->link('edit', get_class($object), $object->id));
+        $this->object->hydrate($form->getData())->write();
+        $this->redirect($this->link('edit', get_class($this->object), $this->object->id));
     }
 
     public function form_delete(Form $form)
     {
-        $object = $form->getObject();
-        $modelclass = get_class($object);
-        $object->delete();
-        $this->redirect($this->link('index', $modelclass));
+        $this->object->delete();
+        $this->redirect($this->link('index', get_class($this->object)));
     }
 }

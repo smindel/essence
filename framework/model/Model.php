@@ -16,7 +16,12 @@ class Model extends Base
             'value' => null
         ),
     );
-    
+
+    public function link()
+    {
+        return 'admin/edit/' . get_class($this) . DIRECTORY_SEPARATOR . $this->id;
+    }
+
     public function db($valtype = 'value', $keytype = 'raw')
     {
         $args = func_get_args();
@@ -103,7 +108,6 @@ class Model extends Base
     {
         $args = func_get_args();
         $modelclass = get_called_class();
-        if ($modelclass == 'Model') $modelclass == array_shift($args);
         $list = call_user_func_array(array($modelclass, 'get'), $args);
         return $list->count() ? $list->shift() : false;
     }
@@ -112,7 +116,7 @@ class Model extends Base
     {
         $args = func_get_args();
         $modelclass = get_called_class();
-        if ($modelclass == 'Model') $modelclass == array_shift($args);
+        if ($modelclass == 'Model') $modelclass = array_shift($args);
         switch (count($args)) {
             case 0: $filter = array(); break;
             case 1: $filter = is_array($args[0]) ? $args[0] : array('id' => (int)$args[0]); break;

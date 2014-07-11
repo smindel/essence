@@ -13,16 +13,20 @@ abstract class Controller extends Base
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $data = $this->handleAction($request->getMethodname(), $request->getParameters());
+        $data = $this->handleAction($request->consume());
 
         if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);
 
         echo $data;
     }
 
-    public function handleAction($method, $parameters)
+    public function handleAction($method)
     {
-        $data = call_user_func_array(array($this, $method . '_action'), $parameters);
+        $reflectionmethod = new ReflectionMethod($this, $method . '_action');
+        $params = $this->request->consume(count($reflectionmethod->getParameters()));
+
+        $data = $reflectionmethod->invokeArgs($this, $params);
+
         if (!is_string($data)) {
             $data = $this->render($method, $data);
         }

@@ -4,38 +4,37 @@ class Request extends Base
 {
     public static $default_controller_class = 'DefaultController';
 
-    protected $controllerclass;
-    protected $methodname;
-    protected $parameters;
+    protected $requesturi;
+    protected $availablesegments;
+    protected $consumedsegments = array();
 
     public function __construct($requesturi)
     {
-        $absoluterequestpath = parse_url($_SERVER["DOCUMENT_ROOT"] . $requesturi,  PHP_URL_PATH);
-        $relativerequestpath = substr($absoluterequestpath, 0, strlen(BASE_PATH)) == BASE_PATH ? trim(substr($absoluterequestpath, strlen(BASE_PATH)), '/') : false;
-        $segments = $relativerequestpath ? explode('/', $relativerequestpath) : array();
-
-        $controllerclass = count($segments) ? array_shift($segments) : self::$default_controller_class;
-        $methodname = count($segments) ? array_shift($segments) : 'index';
-        $parameters = $segments;
-
-        $this->controllerclass = $controllerclass;
-        $this->methodname = $methodname;
-        $this->parameters = $parameters;
+        $this->requesturi = $requesturi;
+        $this->availablesegments = explode('/', parse_url($requesturi, PHP_URL_PATH));
     }
 
-    public function getMethodname()
+    public function consume($numsegments = false)
     {
-        return $this->methodname;
+        if ($numsegments === false) {
+            return ($this->consumedsegments[] = array_shift($this->availablesegments));
+        }
+        $segments = array();
+        while ($numsegments && count($this->availablesegments)) {
+            $segments[] = $this->consumedsegments[] = array_shift($this->availablesegments);
+        }
+        return $segments;
     }
 
-    public function getParameters()
+    public function peek($numsegments = false)
     {
-        return $this->parameters;
+        if (!$numsegments) return reset($this->availablesegments);
+        return array_slice($this->availablesegments, 0, $numsegments);
     }
 
     public function handle()
     {
-        return Base::create($this->controllerclass)->handleRequest($this);
+        return Base::create($this->consume())->handleRequest($this);
     }
 
     public static function relative_url($uri)
@@ -44,10 +43,11 @@ class Request extends Base
         return $uri;
     }
 
-    public static function absolute_url($uri)
+    public static function absolute_url($uri, $justprependserver = false)
     {
-        if (substr($uri, 0, 4) != 'http') return BASE_URL . $uri;
-        return $uri;
+        if (substr($uri, 0, 4) == 'http') return $uri;
+        if ($justprependserver) return 'http://' . $_SERVER['SERVER_NAME'] . $uri;
+        return BASE_URL . $uri;
     }
 
     public function isAjax()

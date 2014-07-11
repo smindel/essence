@@ -39,4 +39,5 @@ set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);
 Builder::$managed_models = array('User', 'Client', 'Invoice', 'InvoiceItem');
 Admin::$managed_models = array('User', 'Client', 'Invoice');
 
-Request::create($_SERVER["REQUEST_URI"])->handle();
+$uri = Request::relative_url(Request::absolute_url($_SERVER["REQUEST_URI"], true));
+Request::create($uri)->handle();
