@@ -52,13 +52,12 @@ class Admin extends Controller
     public function edit_action($model, $id = null) {
         $this->object = $model::one($id) ?: $model::create();
         $fields = $this->object->getFields();
-        $form = Form::create('record', $fields, $this, __FUNCTION__);
-        $form->handleSubmission($this->request);
+        $form = Form::create($model, $fields, $this, __FUNCTION__);
         $form->setAction($this->link('edit', $model, $id));
 
         return array(
             'Me' => $this,
-            'Form' => $form,
+            'Form' => $form->handleRequest($this->request),
         );
     }
 

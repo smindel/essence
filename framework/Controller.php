@@ -4,6 +4,7 @@ abstract class Controller extends Base
 {
     protected static $_curr;
 
+    protected $parent;
     protected $request;
 
     public function handleRequest($request)

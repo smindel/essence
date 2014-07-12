@@ -73,6 +73,11 @@ abstract class FormField extends Base
         return in_array($guess, $htmltypes) ? $guess : false;
     }
 
+    public function handleRequest($request)
+    {
+        aDebug(__CLASS__, __FUNCTION__, func_get_args());
+    }
+
     public function validate($value)
     {
         return isset($this->validator) ? call_user_func($this->validator, $value, $this, $form) : true;

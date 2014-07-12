@@ -12,3 +12,6 @@ Upcomming
 - Dependency Injection (signature) for solID coding
 - ORM / DBAL
 - Model inheritance
+
+- unit tests
+- form field name param: add form name or make array

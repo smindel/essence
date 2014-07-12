@@ -16,13 +16,18 @@ class Request extends Base
         $this->availablesegments = explode('/', parse_url($this->requesturi, PHP_URL_PATH));
     }
 
+    public function remaining()
+    {
+        return count($this->availablesegments);
+    }
+
     public function consume($numsegments = false)
     {
         if ($numsegments === false) {
             return ($this->consumedsegments[] = array_shift($this->availablesegments));
         }
         $segments = array();
-        while ($numsegments && count($this->availablesegments)) {
+        while ($numsegments-- && count($this->availablesegments)) {
             $segments[] = $this->consumedsegments[] = array_shift($this->availablesegments);
         }
         return $segments;
@@ -30,7 +35,7 @@ class Request extends Base
 
     public function peek($numsegments = false)
     {
-        if (!$numsegments) return reset($this->availablesegments);
+        if ($numsegments === false) return reset($this->availablesegments);
         return array_slice($this->availablesegments, 0, $numsegments);
     }
 
