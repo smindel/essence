@@ -19,7 +19,7 @@ class TextFormField extends FormField
     {
         $html = '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label>";
         if ($this->getRows() == 1) {
-            $html .= "<input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"{$this->value}\">";
+            $html .= "<input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\">";
         } else {
             $html .= "<textarea id=\"{$this->name}\" rows=\"" . $this->getRows() . "\" name=\"{$this->name}\">{$this->value}</textarea>";
         }

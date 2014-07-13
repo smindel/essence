@@ -48,9 +48,10 @@ class Form extends Controller
 
         // does the current request carry a form submission
         // capture the form action selected
+        $submitteddata = $request->getRaw($this->name) ?: array();
         $error = $callback = false;
         foreach ($this->fields as $field) {
-            $submittedvalue = $request->getRaw($field->getName());;
+            $submittedvalue = isset($submitteddata[$field->getName()]) ? $submitteddata[$field->getName()] : null;
             if ($field instanceof SubmitFormField && isset($submittedvalue)) {
                 $callback = array($this->parent, $field->getName());
             }
@@ -58,7 +59,7 @@ class Form extends Controller
 
         // if this is a submission validate and set data on fields
         if ($callback) foreach ($this->fields as $field) {
-            $submittedvalue = $request->getRaw($field->getName());
+            $submittedvalue = isset($submitteddata[$field->getName()]) ? $submitteddata[$field->getName()] : null;
             if (!$field->validate($submittedvalue)) {
                 $field->setError('Validation failed');
                 $error = true;

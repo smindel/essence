@@ -13,6 +13,11 @@ abstract class FormField extends Base
         $this->value = $value;
     }
 
+    public function getFullName()
+    {
+        return $this->form->getName() . '[' . $this->name . ']';
+    }
+
     public function getName()
     {
         return $this->name;
@@ -106,6 +111,6 @@ abstract class FormField extends Base
 
     public function html()
     {
-        return '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"{$this->name}\" value=\"{$this->value}\"></div>";
+        return '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\"></div>";
     }
 }
