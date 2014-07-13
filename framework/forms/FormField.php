@@ -83,6 +83,12 @@ abstract class FormField extends Base
         aDebug(__CLASS__, __FUNCTION__, func_get_args());
     }
 
+    public function currentLink()
+    {
+        $link = $this->form ? $this->form->currentLink() : BASE_URL;
+        return $link . $this->getName() . '/' . implode('/', func_get_args());
+    }
+
     public function validate($value)
     {
         return isset($this->validator) ? call_user_func($this->validator, $value, $this, $form) : true;
@@ -111,6 +117,6 @@ abstract class FormField extends Base
 
     public function html()
     {
-        return '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\"></div>";
+        return '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\" data-fyi-url=\"" . $this->currentLink() . "\"></div>";
     }
 }

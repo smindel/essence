@@ -5,7 +5,7 @@
     <base href="{{{BASE_URL}}}">
     {{{ Resources::css() }}}
 </head>
-<body>
+<body data-fyi-url="{{ if (isset($Me)) echo $Me->currentLink(); }}">
     {{{ $_CONTENT_ }}}
     {{{ Resources::js() }}}
 </body>

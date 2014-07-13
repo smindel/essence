@@ -1,12 +1,33 @@
-*, body { font-family:Helvetica; font-size:12px; }
-a { color:#88c;}
+body { font-family:Helvetica; font-size:12px; }
+a { color:#444; }
+a:visited { color:#888; }
+a:active { background-color:#eee; }
 ul { margin:0 0 1em; padding:0 2em 0; }
 
+button, input, select, textarea {
+  font-family : inherit;
+  font-size   : 100%;
+}
 label { display:inline; font-weight:bold; }
 select, button, input, textarea { display:block; }
 input[type="radio"], input[type="checkbox"] { display:inline; }
+input[type="submit"], input[type="button"] {
+    color: #000000;
+    padding: 3px 10px;
+    background: -moz-linear-gradient(top, #ffffff 0%, #ababab);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ababab));
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    border: 1px solid #7d7d7d;
+    -moz-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,0.7);
+    -webkit-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,0.7);
+    box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,0.7);
+    text-shadow: 0px -1px 0px rgba(255,255,255,0.4), 0px 1px 0px rgba(0,0,0,0.3);
+}
 li.list { list-style-image:url(icons/database_go.png); }
 li.edit { list-style-image:url(icons/database_edit.png); }
 li.create { list-style-image:url(icons/database_add.png); }
 .error { font-weight:bold; color:#a00; }
 .field { margin:1em 0; }
+.SubmitFormField { display:inline-block; }

@@ -6,6 +6,7 @@ abstract class Controller extends Base
 
     protected $parent;
     protected $request;
+    protected $consumed = array();
 
     public function handleRequest($request)
     {
@@ -14,17 +15,28 @@ abstract class Controller extends Base
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $data = $this->handleAction($request->consume());
+        $data = $this->handleAction($this->consume());
 
         if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);
 
         echo $data;
     }
 
+    public function consume($numsegments = false)
+    {
+        $segments = $this->request->consume($numsegments);
+        if ($numsegments === false) {
+            $this->consumed[] = $segments;
+        } else {
+            foreach ($segments as $segment) $this->consumed[] = $segment;
+        }
+        return $segments;
+    }
+
     public function handleAction($method)
     {
         $reflectionmethod = new ReflectionMethod($this, $method . '_action');
-        $params = $this->request->consume(count($reflectionmethod->getParameters()));
+        $params = $this->consume(count($reflectionmethod->getParameters()));
 
         $data = $reflectionmethod->invokeArgs($this, $params);
 
@@ -42,6 +54,11 @@ abstract class Controller extends Base
             $output = View::create($layout)->render($data);
         }
         return $output;
+    }
+
+    public function getName()
+    {
+        return get_class($this);
     }
 
     public function getLayout($method = 'LAYOUT')
@@ -69,7 +86,16 @@ abstract class Controller extends Base
 
     public function link()
     {
-        return BASE_URL . get_class($this) . '/' . implode('/', func_get_args());
+        $segments = func_get_args();
+        if (count($segments) == 1 && is_array($segments[0])) $segments = $segments[0];
+        $link = $this->parent ? $this->parent->currentLink() . '/' : BASE_URL;
+        $link .= $this->getName() . '/';
+        return $link . implode('/', $segments);
+    }
+
+    public function currentLink()
+    {
+        return $this->link($this->consumed);
     }
 
     public static function curr()
