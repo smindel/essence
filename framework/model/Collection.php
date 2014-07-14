@@ -45,6 +45,11 @@ class Collection extends Base implements Iterator, ArrayAccess, Serializable
         return View::create($template)->render($this->data);
     }
 
+    public function renderWithMe($template)
+    {
+        return View::create($template)->render(array('Me' => $this->data));
+    }
+
     public function current () { return current($this->data); }
     public function key () { return key($this->data); }
     public function next () { next($this->data); }

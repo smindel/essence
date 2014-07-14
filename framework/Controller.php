@@ -8,6 +8,11 @@ abstract class Controller extends Base
     protected $request;
     protected $consumed = array();
 
+    public function __construct(Controller $parent = null)
+    {
+        $this->parent = $parent;
+    }
+
     public function handleRequest($request)
     {
         self::$_curr = $this;
@@ -15,11 +20,11 @@ abstract class Controller extends Base
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $data = $this->handleAction($this->consume());
+        $data = $this->handleAction($this->consume() ?: 'index');
 
         if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);
 
-        echo $data;
+        return $data;
     }
 
     public function consume($numsegments = false)
@@ -48,8 +53,10 @@ abstract class Controller extends Base
 
     public function render($method, $data)
     {
-        $output = View::create($this->getLayout($method))->render($data);
-        if (!$this->getRequest()->isAjax() && ($layout = $this->getLayout())) {
+        $data['Me'] = $this;
+        $layout = $this->getLayout($method);
+        $output = View::create($layout)->render($data);
+        if (!$this->parent && !$this->getRequest()->isAjax() && ($layout = $this->getLayout())) {
             $data['_CONTENT_'] = $output;
             $output = View::create($layout)->render($data);
         }
@@ -61,12 +68,17 @@ abstract class Controller extends Base
         return get_class($this);
     }
 
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
     public function getLayout($method = 'LAYOUT')
     {
         $i = 0;
         $class = get_class($this);
         $template = $class . '.' . $method;
-        while (!($exists = View::exists($template)) && $class && $i < 5) {
+        while (!($exists = View::exists($template)) && $class && $i < 10) {
             $class = get_parent_class($class);
             $template = $class . '.' . $method;
         }
@@ -87,9 +99,16 @@ abstract class Controller extends Base
     public function link()
     {
         $segments = func_get_args();
-        if (count($segments) == 1 && is_array($segments[0])) $segments = $segments[0];
-        $link = $this->parent ? $this->parent->currentLink() . '/' : BASE_URL;
-        $link .= $this->getName() . '/';
+        if (count($segments) == 1 && is_array($segments[0])) {
+            $segments = $segments[0];
+        }
+
+        if ($this->parent) {
+            $link = $this->parent->currentLink() . '/';
+        } else {
+            $link = BASE_URL . $this->getName() . '/';
+        }
+
         return $link . implode('/', $segments);
     }
 

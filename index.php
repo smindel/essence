@@ -38,5 +38,6 @@ set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);
 
 Builder::$managed_models = array('User', 'Client', 'Invoice', 'InvoiceItem');
 Admin::$managed_models = array('User', 'Client', 'Invoice');
+Backend::$managers = array('Admin');
 
-Request::create()->handle();
+echo Request::create()->handle();

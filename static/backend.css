@@ -1,0 +1,66 @@
+/* three column layout: http://dabblet.com/gist/3748868 */
+/* design: http://themeforest.net/item/minimal-responsive-admin-template/full_screen_preview/7326575?ref=2experts */
+
+* {
+    margin: 0;
+    padding: 0
+}
+
+html, body {
+    height: 100%;            
+}
+
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+
+    background-image: url("noise.png"), url("1.jpg");
+    background-position: left top;
+    background-repeat: repeat, no-repeat;
+    background-size: auto auto, cover;
+}
+
+.section > a, .current > a {
+    font-weight:bold;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 19px;
+    border-bottom:1px dotted rgba(0,0,0,.75);
+    background: rgba(0,0,0,.25);
+}
+
+nav.left {
+    width: 200px;
+    background: rgba(0,0,0,.1);
+    float: left;
+}
+
+nav.right {
+    width: 200px;
+    background: rgba(0,0,0,.1);
+    float: right;
+}
+
+main {
+    overflow: hidden;
+}
+
+nav, main {
+    height: 100%;
+    overflow: auto;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: rgba(0,0,0,.25);
+}

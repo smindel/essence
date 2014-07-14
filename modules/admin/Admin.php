@@ -13,23 +13,38 @@ class Admin extends Controller
         Authentication::challenge();
     }
 
+    public function getModel()
+    {
+        return $this->consumed[1];
+    }
+
     public function getObject()
     {
         return $this->object;
     }
 
-    public function index_action() {
-        $links = array();
+    public function Menu()
+    {
+        $curr = Controller::curr();
+        while ($curr && !($curr instanceof self)) $curr = $curr->getParent();
+        $items = array();
         foreach (self::$managed_models as $model) {
-            $links[$this->link('list', $model)] = $model;
+            $items[$model] = array(
+                'Status' => $curr->getModel() == $model ? 'section' : 'link',
+                'Link' => $curr->link('list', $model),
+                'Title' => $model,
+            );
         }
-        return array(
-            'Me' => $this,
-            'Links' => $links,
-        );
+        return $items;
+    }
+
+    public function index_action() {
+        $this->redirect($this->link('list', reset(self::$managed_models)));
     }
 
     public function list_action($model) {
+        if (!$model) $this->index_action();
+
         $links = array(array(
             'link' => $this->link('edit', $model),
             'title' => "{$model} erstellen",
@@ -44,7 +59,6 @@ class Admin extends Controller
         }
         return array(
             'Model' => $model,
-            'Me' => $this,
             'Links' => $links,
         );
     }
@@ -56,7 +70,6 @@ class Admin extends Controller
         $form->setAction($this->link('edit', $model, $id));
 
         return array(
-            'Me' => $this,
             'Form' => $form->handleRequest($this->request),
         );
     }

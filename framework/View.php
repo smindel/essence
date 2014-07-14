@@ -6,6 +6,7 @@ class View extends Base
 
     public function __construct($template)
     {
+        if (empty($template)) throw new InvalidArgumentException("No template name specified in 'View->__construct()'");
         $this->template = $template;
     }
 

@@ -19,7 +19,7 @@ class Model extends Base
 
     public function link()
     {
-        return 'admin/edit/' . get_class($this) . DIRECTORY_SEPARATOR . $this->id;
+        return Controller::curr()->getParent()->link('edit', get_class($this), $this->id);
     }
 
     public function db($valtype = 'value', $keytype = 'raw')
