@@ -21,7 +21,7 @@ class TextFormField extends FormField
         if ($this->getRows() == 1) {
             $html .= "<input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\">";
         } else {
-            $html .= "<textarea id=\"{$this->name}\" rows=\"" . $this->getRows() . "\" name=\"{$this->name}\">{$this->value}</textarea>";
+            $html .= "<textarea id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" rows=\"" . $this->getRows() . "\">{$this->value}</textarea>";
         }
         $html .= '</div>';
 

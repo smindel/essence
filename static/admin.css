@@ -4,6 +4,22 @@ a:visited { color:#888; }
 a:active { background-color:#eee; }
 ul { margin:0 0 1em; padding:0 2em 0; }
 
+.light {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.widget {
+    padding:10px;
+    margin:10px;
+    border-radius:10px;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.noise {
+    background: url("dot_pattern.png") repeat scroll 0 0 rgba(0, 0, 0, 0.3);
+}
+
 button, input, select, textarea {
   font-family : inherit;
   font-size   : 100%;
