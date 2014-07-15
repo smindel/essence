@@ -1,11 +1,5 @@
 <phpunit bootstrap="./init.php">
     <testsuite name="Essence Framework">
-        <directory>./</directory>
+        <directory>./framework/</directory>
     </testsuite>
-
-    <filter>
-        <blacklist>
-            <directory>vendor/</directory>
-        </blacklist>
-    </filter>
 </phpunit>
