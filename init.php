@@ -26,8 +26,6 @@ spl_autoload_register(function($classname){
     }
     if ($pathname) {
         include_once($pathname);
-    } else {
-        die("Unknown class '{$classname}'\n");
     }
 });
 
