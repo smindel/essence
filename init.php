@@ -16,7 +16,7 @@ function aDebug() {
     return true;
 }
 
-// require('vendor/autoload.php');
+require('vendor/autoload.php');
 
 spl_autoload_register(function($classname){
     $searchpattern = $classname . '.php';
