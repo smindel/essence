@@ -16,6 +16,8 @@ function aDebug() {
     return true;
 }
 
+// require('vendor/autoload.php');
+
 spl_autoload_register(function($classname){
     $searchpattern = $classname . '.php';
     $searchpaths = array('project', 'modules', 'framework');
@@ -25,13 +27,13 @@ spl_autoload_register(function($classname){
     if ($pathname) {
         include_once($pathname);
     } else {
-        die("Unknown class '{$classname}'");
+        die("Unknown class '{$classname}'\n");
     }
 });
 
 session_start();
 define('ENV_TYPE', 'dev');
 define('PASS_SALT', 'k.jna5v(8&');
-define('BASE_PATH', dirname($_SERVER["SCRIPT_FILENAME"]));
+define('BASE_PATH', dirname(__FILE__));
 define('BASE_URL', 'http://' . (isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : 'localhost') . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) . '/');
 set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);

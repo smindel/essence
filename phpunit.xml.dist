@@ -2,4 +2,10 @@
     <testsuite name="Essence Framework">
         <directory>./</directory>
     </testsuite>
+
+    <filter>
+        <blacklist>
+            <directory>vendor/</directory>
+        </blacklist>
+    </filter>
 </phpunit>
