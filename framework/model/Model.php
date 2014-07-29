@@ -135,7 +135,8 @@ class Model extends Base
         if (method_exists($this, ($method = 'get' . $key))) {
             return $this->$method();
         } else if (isset($this->db[$key])) {
-            list($metatype, $class, $param) = explode(':', $this->db('type')[$key] . ':SET NULL:');
+            $type = $this->db('type');
+            list($metatype, $class, $param) = explode(':', $type[$key] . ':SET NULL:');
             if ($metatype == 'FOREIGN') {
                 return isset($this->db[$key]['value']) ? $class::one($this->db[$key]['value']) : null;
             } else if ($metatype == 'LOOKUP') {
@@ -155,7 +156,8 @@ class Model extends Base
         } else if ($key == 'id') {
             throw new Exception("Cannot set property '" . get_class($this) . "->$key'");
         } else if (isset($this->db[$key])) {
-            list($metatype, $class, $param) = explode(':', $this->db('type')[$field] . ':SET NULL');
+            $type = $this->db('type');
+            list($metatype, $class, $param) = explode(':', $type[$key] . ':SET NULL:');
             if ($metatype == 'FOREIGN') {
                 if ($val instanceof $class) {
                     if ($val->id) {
@@ -190,7 +192,8 @@ class Model extends Base
     public function __call($key, $args)
     {
         if (isset($this->db[$key])) {
-            list($metatype, $class, $param) = explode(':', $this->db('type')[$key] . ':SET NULL');
+            $type = $this->db('type');
+            list($metatype, $class, $param) = explode(':', $type[$key] . ':SET NULL');
             if ($metatype == 'FOREIGN') {
                 $options = $class::get();
                 if ($param == 'SET NULL') array_unshift($options, $class::create());
@@ -220,7 +223,7 @@ class Model extends Base
 
         $values = array();
         foreach ($this->db as $key => $options) {
-            if (!isset($options['value']) || Database::spec($options['field']) === false) continue;
+            if (!isset($options['value']) || isset($options['type']) && Database::spec($options['type']) === false) continue;
             $values[$key] = $options['value'];
         }
 

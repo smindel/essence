@@ -1,4 +1,6 @@
 .DS_Store
 cache/*
 project/*
+vendor/*
+static/*
 db.sqlite

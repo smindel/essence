@@ -4,9 +4,12 @@ class Database
 {
     protected static $_conn;
 
-    public static function conn()
+    public static function conn($conn = false)
     {
-        if (!self::$_conn) {
+        if ($conn) {
+            self::$_conn = $conn;
+            self::query('PRAGMA foreign_keys = ON');
+        } else if (!self::$_conn) {
             self::$_conn = new PDO('sqlite:' . BASE_PATH . '/db.sqlite');
             self::query('PRAGMA foreign_keys = ON');
         }
@@ -49,7 +52,8 @@ class Database
         $sql = 'SELECT * FROM "' . $table . '" WHERE ' . implode(' AND ', $where);
         $sth = self::conn()->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         if (!$sth) {
-            throw new Exception(self::conn()->errorInfo()[2]);
+            $error = self::conn()->errorInfo();
+            throw new Exception($error[2]);
         } else {
             $sth->execute($params);
             return $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -59,8 +63,9 @@ class Database
     public static function query($sql, $style = PDO::FETCH_ASSOC)
     {
         $sth = self::conn()->query($sql);
-        if(self::conn()->errorInfo()[2]) {
-            throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+        $error = self::conn()->errorInfo();
+        if($error[2]) {
+            throw new Exception($error[2] . ' (' . $sql . ')');
         }
         return $sth->fetchAll($style);
     }
@@ -91,11 +96,13 @@ class Database
         $sql = 'INSERT INTO "' . $table . '" (' . implode(', ', array_keys($keys)) . ') VALUES (' . implode(', ', array_values($keys)) . ')';
         $sth = self::conn()->prepare($sql);
         if (!$sth) {
-            throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+            $error = self::conn()->errorInfo();
+            throw new Exception($error[2] . ' (' . $sql . ')');
         } else {
             $sth->execute($params);
-            if(self::conn()->errorInfo()[2]) {
-                throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ') , ' . print_r($params, true));
+            $error = self::conn()->errorInfo();
+            if($error[2]) {
+                throw new Exception($error[2] . ' (' . $sql . ') , ' . print_r($params, true));
             }
             return self::conn()->lastInsertId() ?: $values['id'];
         }
@@ -112,11 +119,13 @@ class Database
         $sql = 'UPDATE "' . $table . '" SET ' . implode(', ', $keys) . ' WHERE "id" = :id';
         $sth = self::conn()->prepare($sql);
         if (!$sth) {
-            throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+            $error = self::conn()->errorInfo();
+            throw new Exception($error[2] . ' (' . $sql . ')');
         } else {
             $sth->execute($params);
-            if(self::conn()->errorInfo()[2]) {
-                throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ') , ' . print_r($params, true));
+            $error = self::conn()->errorInfo();
+            if($error[2]) {
+                throw new Exception($error[2] . ' (' . $sql . ') , ' . print_r($params, true));
             }
             return self::conn()->lastInsertId() ?: $values['id'];
         }
@@ -127,11 +136,13 @@ class Database
         $sql = 'DELETE FROM "' . $table . '" WHERE "id" = :id';
         $sth = self::conn()->prepare($sql);
         if (!$sth) {
-            throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+            $error = self::conn()->errorInfo();
+            throw new Exception($error[2] . ' (' . $sql . ')');
         } else {
             $sth->execute(array(':id' => $id));
-            if(self::conn()->errorInfo()[2]) {
-                throw new Exception(self::conn()->errorInfo()[2] . ' (' . $sql . ')');
+            $error = self::conn()->errorInfo();
+            if($error[2]) {
+                throw new Exception($error[2] . ' (' . $sql . ')');
             }
         }
     }
