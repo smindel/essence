@@ -40,6 +40,50 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $obj->delete();
         $this->assertNull(ModelTest_Model::one($id));
     }
+
+    public function testRealtions()
+    {
+        Builder::create()->build('ModelTest_Model');
+        Builder::create()->build('ModelTestChild_Model');
+
+        $parent1 = ModelTest_Model::create();
+        $parent1->Name = 'Andy';
+        $parent1->write();
+
+        $parent2 = ModelTest_Model::create();
+        $parent2->Name = 'Robert';
+        $parent2->write();
+
+        $child1 = ModelTestChild_Model::create();
+        $child1->Name = 'Yoko';
+        $child1->write();
+
+        $child2 = ModelTestChild_Model::create();
+        $child2->Name = 'Milli';
+        $child2->write();
+
+        $child3 = ModelTestChild_Model::create();
+        $child3->Name = 'Paula';
+        $child3->write();
+
+        $this->assertEquals(3, $parent1->Children()->count());
+        $this->assertEquals(2, $child1->Daddy()->count());
+        $this->assertEquals(0, $parent1->Children->count());
+        $this->assertNull($child1->Daddy);
+
+        $child1->Daddy = $parent1;
+        $child1->write();
+        $child2->Daddy = $parent1;
+        $child2->write();
+        $child3->Daddy = $parent2;
+        $child3->write();
+
+        $this->assertEquals(2, $parent1->Children->count());
+        $this->assertEquals('Andy', $child1->Daddy->Name);
+        $this->assertEquals('Andy', $child2->Daddy->Name);
+        $this->assertEquals(1, $parent2->Children->count());
+        $this->assertEquals('Robert', $child3->Daddy->Name);
+    }
 }
 
 class ModelTest_Model extends Model
@@ -47,5 +91,15 @@ class ModelTest_Model extends Model
     protected $db = array(
         'id' => array('type' => 'ID'),
         'Name' => array(),
+        'Children' => array('type' => 'LOOKUP:ModelTestChild_Model:Daddy'),
+    );
+}
+
+class ModelTestChild_Model extends Model
+{
+    protected $db = array(
+        'id' => array('type' => 'ID'),
+        'Name' => array(),
+        'Daddy' => array('type' => 'FOREIGN:ModelTest_Model:RESTRICT'),
     );
 }
