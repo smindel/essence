@@ -7,6 +7,7 @@ abstract class Controller extends Base
     protected $parent;
     protected $request;
     protected $consumed = array();
+    protected $redirect;
 
     public function __construct(Controller $parent = null)
     {
@@ -53,6 +54,8 @@ abstract class Controller extends Base
 
     public function render($method, $data)
     {
+        if ($this->redirect) return '';
+
         $data['Me'] = $this;
         $layout = $this->getLayout($method);
         $output = View::create($layout)->render($data);
@@ -87,8 +90,13 @@ abstract class Controller extends Base
 
     public function redirect($url, $code = 302)
     {
-        header('Location: ' . $url, true, $code);
-        exit;
+        $this->redirect = true;
+        if (PHP_SAPI == 'cli') {
+            if ($this->parent) $this->parent->redirect($url, $code);
+        } else {
+            header('Location: ' . $url, true, $code);
+            exit;
+        }
     }
 
     public function redirectBack()

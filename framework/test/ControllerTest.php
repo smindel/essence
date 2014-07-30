@@ -8,7 +8,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $methodname = 'lowercase';
         $param = 'Param';
 
-        $request = Request::create(implode('/', array($controllerclass, $methodname, $param)));
+        $request = Request::create(implode('/', array($controllerclass, $methodname, $param)), array());
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
@@ -23,7 +23,7 @@ class ControllerTest extends PHPUnit_Framework_TestCase
         $param[] = 'uppercase';
         $param[] = 'Test';
 
-        $request = Request::create(implode('/', array($controllerclass, $methodname, implode('/', $param))));
+        $request = Request::create(implode('/', array($controllerclass, $methodname, implode('/', $param))), array());
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 

@@ -128,8 +128,7 @@ class Form extends Controller
 
     public function redirectBack()
     {
-        $uri = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $this->parent->redirect($uri);
-        die();
+        $uri = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : parse_url($this->request->getUri(), PHP_URL_PATH);
+        return $this->redirect($uri);
     }
 }
