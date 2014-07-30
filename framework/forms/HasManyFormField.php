@@ -6,7 +6,7 @@ class HasManyFormField extends FormField
     {
         $name = $this->name;
         $object = $this->form->getObject();
-        list(,,$remotefield) = explode(':', $object->getProperty($name);
+        list(,,$remotefield) = explode(':', $object->getProperty($name));
         $options = '';
         foreach ($object->$name() as $option) {
             $options .= "<div class=\"option\"><input name=\"" . $this->getFullName() . "[{$option->id}]\" id=\"{$this->name}[{$option->id}]\" type=\"checkbox\" value=\"{$option->id}\"" . ($option->$remotefield->id == $object->id ? ' checked' : '') . " disabled=\"\"> <a href=\"" . $option->link() . "\">{$option->title()}</a></div>";

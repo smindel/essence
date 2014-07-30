@@ -123,6 +123,6 @@ class FormTest_Model extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array('field' => 'TextFormField'),
+        'Name' => array(),
     );
 }

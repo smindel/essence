@@ -9,11 +9,16 @@ class Model extends Base
             'label' => 'ID',
             'value' => null
         ),
-        'fid' => array(
-            'type' => 'FOREIGN:tablename:|RESTRICT|CASCADE',
-            'field' => 'HiddenFormField',
-            'label' => 'ID',
+        'parent' => array(
+            'type' => 'FOREIGN:RemoteClassName:|RESTRICT|CASCADE(|SET NULL)',
+            'field' => 'HasOneFormField',
+            'label' => 'Parent',
             'value' => null
+        ),
+        'children' => array(
+            'type' => 'LOOKUP:RemoteClassName:RemoteJoinField',
+            'field' => 'HasManyFormField|ReadonlyFormField:add',
+            'label' => 'Children',
         ),
     );
 
@@ -28,8 +33,8 @@ class Model extends Base
         if (isset($this->db[$property][$key])) return $this->db[$property][$key];
         switch ($key) {
             case 'type': return 'DEFAULT';
-            case 'label': return $key;
-            case 'field': return null;
+            case 'label': return $property;
+            case 'field': return $this->getDefaultFormFieldClass($property);
             case 'value': return null;
         }
     }
@@ -51,16 +56,31 @@ class Model extends Base
         return $class;
     }
 
+    public function getDefaultFormFieldClass($propertyname)
+    {
+        if (isset($this->db[$propertyname]['field'])) return $this->db[$propertyname]['field'];
+        list($type) = explode(':', $this->getProperty($propertyname));
+        switch ($type) {
+            case 'ID': return 'HiddenFormField';
+            case 'DATE': return 'DateFormField';
+            case 'DATETIME': return 'DatetimeFormField';
+            case 'BOOL': return 'CheckboxFormField';
+            case 'FOREIGN': return 'HasOneFormField';
+            case 'LOOKUP': return 'HasManyFormField';
+            default: return 'TextFormField';
+        }
+    }
+
     public function getFields()
     {
         $fields = Collection::create(array('SecurityID' => SecurityTokenFormField::create('SecurityID')));
-        foreach ($this->db as $key => $options) {
-            if (empty($options['field'])) continue;
-            list($fieldclass) = explode(':', $options['field']);
+        foreach ($this->getProperties('field') as $key => $fieldtype) {
+            if (!$fieldtype) continue;
+            list($fieldclass) = explode(':', $fieldtype);
             $fields[$key] = $fieldclass::create(
                 $key,
-                isset($options['label']) ? $options['label'] : $key,
-                isset($options['value']) ? $options['value'] : null
+                $this->getProperty($key, 'label'),
+                $this->getProperty($key, 'value')
             );
         }
         if ($this->id) {
