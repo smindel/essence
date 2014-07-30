@@ -47,11 +47,7 @@ class Model extends Base
     {
         $class = get_called_class();
         if ($class == 'Model') throw new Exception('Cannot find base for class Model');
-        $i = 0;
-        while (get_parent_class($class) != 'Model' && $i < 100) {
-            $class = get_parent_class($class);
-            $i++;
-        }
+        while (get_parent_class($class) != 'Model' && $i < 100) $class = get_parent_class($class);
         return $class;
     }
 

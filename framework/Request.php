@@ -16,6 +16,11 @@ class Request extends Base
         $this->availablesegments = explode('/', parse_url($this->requesturi, PHP_URL_PATH));
     }
 
+    public function getUri($absolute = false)
+    {
+        return $absolute ? self::absolute_url($this->requesturi) : $this->requesturi;
+    }
+
     public function remaining()
     {
         return count($this->availablesegments);

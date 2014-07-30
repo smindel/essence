@@ -33,5 +33,5 @@ session_start();
 define('ENV_TYPE', 'dev');
 define('PASS_SALT', 'k.jna5v(8&');
 define('BASE_PATH', dirname(__FILE__));
-define('BASE_URL', 'http://' . (isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : 'localhost') . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) . '/');
+define('BASE_URL', 'http://' . (isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) : 'localhost') . '/');
 set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);

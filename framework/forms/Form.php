@@ -118,7 +118,7 @@ class Form extends Controller
 
     public function getAction()
     {
-        return Request::absolute_url($_SERVER['REQUEST_URI'], true);
+        return $this->action ?: $this->request->getUri(true);
     }
 
     public function html()

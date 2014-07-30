@@ -6,7 +6,7 @@ class ReadonlyFormField extends FormField
     {
         $name = $this->name;
         $object = $this->form->getObject();
-        if (isset($object->getProperty($name, 'field'))) {
+        if ($object->getProperty($name, 'field')) {
             list(, $action) = explode(':', $object->getProperty($name, 'field') . ':');
             $actions = explode('|', $action);
             list($metatype, $class, $remotefield) = explode(':', $object->getProperty($name));
