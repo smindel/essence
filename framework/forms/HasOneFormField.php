@@ -14,7 +14,7 @@ class HasOneFormField extends FormField
 
     public function validate($value)
     {
-        list(,,$constrain) = explode(':', $this->form->getObject()->db('type')[$this->name] . '::');
+        list(,,$constrain) = explode(':', $this->form->getObject()->getProperty($this->name) . '::');
         if ($constrain == 'CASCADE' || $constrain == 'RESTRICT') {
             if ((int)$value < 1) return false;
         }

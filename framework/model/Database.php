@@ -22,7 +22,7 @@ class Database
         foreach ($specs as $key => $val) {
             $val = self::spec($val);
             if ($val === false) continue;
-            $def[] = $val == 'auto' ? "\"{$key}\"" : "\"{$key}\" $val";
+            $def[] = $val == 'DEFAULT' ? "\"{$key}\"" : "\"{$key}\" $val";
         }
         Database::conn()->query("CREATE TABLE IF NOT EXISTS \"{$table}\" (" . implode(', ', $def) . ")");
     }

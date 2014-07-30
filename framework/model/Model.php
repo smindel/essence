@@ -22,32 +22,25 @@ class Model extends Base
         return Controller::curr()->getParent()->link('edit', get_class($this), $this->id);
     }
 
-    public function db($valtype = 'value', $keytype = 'raw')
+    public function getProperty($property, $key = 'type')
     {
-        $args = func_get_args();
-        $class = get_class($this);
-        $valtype = array_shift($args);
-        $keytype = array_shift($args);
-        $defaults = array('type' => 'auto', 'field' => null, 'value' => null);
-        $db = array();
-        foreach ($this->db as $col => $options) {
-            $defaults['label'] = $col;
-            switch ($keytype) {
-                case 'colon': $key = ':' . $col; break;
-                case 'doublequoted': $key = '"' . $col . '"'; break;
-                default: $key = $col;
-            }
-            switch ($valtype) {
-                case 'colon': $val = ':' . $col; break;
-                case 'doublequoted': $val = '"' . $col . '"'; break;
-                case 'key': $val = $col;
-                case 'singlequoted': $val = isset($options['value']) ? "'{$options['value']}'" : "''"; break;
-                case 'options': $val = array_merge($defaults, $options); break;
-                default: $val = isset($options[$valtype]) ? $options[$valtype] : (isset($defaults[$valtype]) ? $defaults[$valtype] : null); break;
-            }
-            $db[$key] = $val;
+        if (!isset($this->db[$property])) return false;
+        if (isset($this->db[$property][$key])) return $this->db[$property][$key];
+        switch ($key) {
+            case 'type': return 'DEFAULT';
+            case 'label': return $key;
+            case 'field': return null;
+            case 'value': return null;
         }
-        return $db;
+    }
+
+    public function getProperties($values = 'type')
+    {
+        $properties = array();
+        foreach ($this->db as $prop => $spec) {
+            $properties[$prop] = $this->getProperty($prop, $values);
+        }
+        return $properties;
     }
 
     public static function base_class()
@@ -135,8 +128,7 @@ class Model extends Base
         if (method_exists($this, ($method = 'get' . $key))) {
             return $this->$method();
         } else if (isset($this->db[$key])) {
-            $type = $this->db('type');
-            list($metatype, $class, $param) = explode(':', $type[$key] . ':SET NULL:');
+            list($metatype, $class, $param) = explode(':', $this->getProperty($key) . ':SET NULL:');
             if ($metatype == 'FOREIGN') {
                 return isset($this->db[$key]['value']) ? $class::one($this->db[$key]['value']) : null;
             } else if ($metatype == 'LOOKUP') {
@@ -156,8 +148,7 @@ class Model extends Base
         } else if ($key == 'id') {
             throw new Exception("Cannot set property '" . get_class($this) . "->$key'");
         } else if (isset($this->db[$key])) {
-            $type = $this->db('type');
-            list($metatype, $class, $param) = explode(':', $type[$key] . ':SET NULL:');
+            list($metatype, $class, $param) = explode(':', $this->getProperty($key) . ':SET NULL:');
             if ($metatype == 'FOREIGN') {
                 if ($val instanceof $class) {
                     if ($val->id) {
@@ -192,8 +183,7 @@ class Model extends Base
     public function __call($key, $args)
     {
         if (isset($this->db[$key])) {
-            $type = $this->db('type');
-            list($metatype, $class, $param) = explode(':', $type[$key] . ':SET NULL');
+            list($metatype, $class, $param) = explode(':', $this->getProperty($key) . ':SET NULL');
             if ($metatype == 'FOREIGN') {
                 $options = $class::get();
                 if ($param == 'SET NULL') array_unshift($options, $class::create());
