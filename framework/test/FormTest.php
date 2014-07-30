@@ -95,33 +95,51 @@ class FormTest extends PHPUnit_Framework_TestCase
     public function testFormSubmit()
     {
         Builder::create()->build('FormTest_Model');
-        $obj = FormTest_Model::create();
-        $obj->Name = 'Andy';
-        $obj->write();
-        $id = $obj->id;
 
         $controllerclass = 'FormTest_Controller';
         $methodname = 'edit';
-        $param = $obj->id;
 
         $data = array(
             'IgnoreSecurityToken' => true,
+            'FormTest_ModelForm' => array('Name' => 'Andy', 'form_save' => 'save')
+        );
+        $request = Request::create(implode('/', array($controllerclass, $methodname)), $data);
+        $controller = Base::create($request->consume());
+        $response = $controller->handleRequest($request);
+
+        $this->assertEquals('Andy', FormTest_Model::one()->Name, 'Form submission to create new object');
+
+
+
+        $controllerclass = 'FormTest_Controller';
+        $methodname = 'edit';
+        $param = FormTest_Model::one()->id;
+
+        $data = array(
+            'IgnoreSecurityToken' => true,
+            'FormTest_ModelForm' => array('Name' => 'Christian', 'form_save' => 'save')
+        );
+        $request = Request::create(implode('/', array($controllerclass, $methodname, $param)), $data);
+        $controller = Base::create($request->consume());
+        $response = $controller->handleRequest($request);
+
+        $this->assertEquals('Christian', FormTest_Model::one()->Name, 'Form submission succeeds without Security Token');
+
+
+
+        $controllerclass = 'FormTest_Controller';
+        $methodname = 'edit';
+        $param = FormTest_Model::one()->id;
+
+        $data = array(
+            'IgnoreSecurityToken' => false,
             'FormTest_ModelForm' => array('Name' => 'Tom', 'form_save' => 'save')
         );
         $request = Request::create(implode('/', array($controllerclass, $methodname, $param)), $data);
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
-        $this->assertEquals('Tom', FormTest_Model::one($id)->Name, 'Form submission succeeds without Security Token');
-
-        $data = array(
-            'FormTest_ModelForm' => array('Name' => 'James', 'form_save' => 'save')
-        );
-        $request = Request::create(implode('/', array($controllerclass, $methodname, $param)), $data);
-        $controller = Base::create($request->consume());
-        $response = $controller->handleRequest($request);
-
-        $this->assertEquals('Tom', FormTest_Model::one($id)->Name, 'Form submission fails with empty Security Token');
+        $this->assertEquals('Christian', FormTest_Model::one()->Name, 'Form submission fails with empty Security Token');
     }
 }
 
