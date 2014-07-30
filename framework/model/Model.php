@@ -102,7 +102,7 @@ class Model extends Base
         $args = func_get_args();
         $modelclass = get_called_class();
         $list = call_user_func_array(array($modelclass, 'get'), $args);
-        return $list->count() ? $list->shift() : false;
+        return $list->count() ? $list->shift() : null;
     }
 
     public static function get()
@@ -167,17 +167,6 @@ class Model extends Base
         } else {
             throw new Exception("Undefined property '" . get_class($this) . "->$key'");
         }
-    }
-
-    public function __unset($key)
-    {
-        if (!isset($this->db[$key])) throw new Exception("Undefined property '" . get_class($this) . "->$key'");
-        unset($this->db[$key]['value']);
-    }
-
-    public function __isset($key)
-    {
-        return isset($this->db[$key]) && isset($this->db[$key]['value']);
     }
 
     public function __call($key, $args)

@@ -14,15 +14,31 @@ class ModelTest extends PHPUnit_Framework_TestCase
         Database::conn($this->db);
     }
 
-    public function testTest()
+    public function testCRUD()
     {
         Builder::create()->build('TestModel');
+
+        // create and write object
         $obj = TestModel::create();
         $obj->Name = 'Andy';
         $obj->write();
+
+        // test write set id
         $id = $obj->id;
         $this->assertTrue($id > 0);
+
+        // test read and correct property assignment
         $this->assertEquals(TestModel::one($id)->id, $id);
+        $this->assertEquals(TestModel::one('id', $id)->Name, 'Andy');
+
+        // change property
+        $obj->Name = 'Sarah';
+        $obj->write();
+        $this->assertEquals(TestModel::one(array('id' => $id))->title(), 'Sarah');
+
+        // delete object
+        $obj->delete();
+        $this->assertNull(TestModel::one($id));
     }
 }
 
