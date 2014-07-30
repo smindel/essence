@@ -4,7 +4,7 @@
         <exclude>./cache/</exclude>
     </testsuite>
     <filter>
-        <whitelist>
+        <whitelist processUncoveredFilesFromWhitelist="true">
             <directory>./framework/</directory>
             <exclude>
                 <directory>./cache</directory>
