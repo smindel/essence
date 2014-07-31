@@ -35,7 +35,7 @@ class ReadonlyFormField extends FormField
 
     public function edit_action($id)
     {
-        $this->object = $this->parent->getObject()->{$this->name}[$id];
+        $this->object = $this->parent->getObject()->{$this->name}()[$id];
         $fields = $this->object->getFields();
         $form = Form::create($this->name . 'Form', $fields, $this, __FUNCTION__);
         $form->setAction($this->link($this->name, 'edit', $id));
