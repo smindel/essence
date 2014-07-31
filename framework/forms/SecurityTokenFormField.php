@@ -2,7 +2,7 @@
 
 class SecurityTokenFormField extends HiddenFormField
 {
-    public function html()
+    public function __toString()
     {
         return "<input type=\"hidden\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"" . $this->securityId() . "\">";
     }

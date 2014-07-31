@@ -15,7 +15,7 @@ class TextFormField extends FormField
         return $this;
     }
 
-    public function html()
+    public function __toString()
     {
         $html = '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label>";
         if ($this->getRows() == 1) {

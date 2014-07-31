@@ -69,13 +69,13 @@ class Form extends Controller
 
         // if there are unconsumed request segments handle or forward them
         $data = false;
-        if ($this->request->peek() == $this->name) {
-            list(, $segment) = $this->request->consume(2);
-            if (method_exists($this, $segment . '_action')) {
-                $data = $this->handleAction($segment);
-            } else if (isset($this->fields[$segment])) {
-                $data = $this->fields[$segment]->handleRequest($this->request);
+        if (method_exists($this, $this->request->peek() . '_action')) {
+            $data = $this->handleAction(($method = $this->request->consume()));
+            if (!is_string($data)) {
+                $data = $this->render($method, $data);
             }
+        } else if (isset($this->fields[$this->request->peek() ?: 0])) {
+            $data = $this->fields[$this->request->consume()]->handleRequest($this->request);
         }
 
         if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);
@@ -121,7 +121,7 @@ class Form extends Controller
         return $this->action ?: $this->request->getUri(true);
     }
 
-    public function html()
+    public function __toString()
     {
         return Collection::create(array('Me' => $this))->renderWith('form');
     }

@@ -1,11 +1,11 @@
 <?php
 
-abstract class FormField extends Base
+abstract class FormField extends Controller
 {
     protected $name;
     protected $label;
     protected $value;
-    protected $form;
+    protected $request;
 
     public function __construct($name, $label = null, $value = null) {
         $this->name = $name;
@@ -15,7 +15,7 @@ abstract class FormField extends Base
 
     public function getFullName()
     {
-        return $this->form->getName() . '[' . $this->name . ']';
+        return $this->parent->getName() . '[' . $this->name . ']';
     }
 
     public function getName()
@@ -53,12 +53,12 @@ abstract class FormField extends Base
 
     public function setForm(Form $form)
     {
-        $this->form = $form;
+        $this->parent = $form;
     }
 
     public function getId()
     {
-        return str_replace('/', '_', $this->form->getAction() . '_' . $this->name);
+        return str_replace('/', '_', $this->parent->getAction() . '_' . $this->name);
     }
 
     public function getHtmlType()
@@ -78,14 +78,9 @@ abstract class FormField extends Base
         return in_array($guess, $htmltypes) ? $guess : false;
     }
 
-    public function handleRequest($request)
-    {
-        aDebug(__CLASS__, __FUNCTION__, func_get_args());
-    }
-
     public function currentLink()
     {
-        $link = $this->form ? $this->form->currentLink() : BASE_URL;
+        $link = $this->parent ? $this->parent->currentLink() : BASE_URL;
         return $link . $this->getName() . '/' . implode('/', func_get_args());
     }
 
@@ -115,7 +110,7 @@ abstract class FormField extends Base
         return $msg;
     }
 
-    public function html()
+    public function __toString()
     {
         return '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\" data-fyi-url=\"" . $this->currentLink() . "\"></div>";
     }

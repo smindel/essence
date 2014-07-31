@@ -2,7 +2,7 @@
 
 class HasManyFormField extends FormField
 {
-    public function html()
+    public function __toString()
     {
         $name = $this->name;
         $object = $this->form->getObject();

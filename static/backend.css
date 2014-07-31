@@ -1,5 +1,10 @@
 /* three column layout: http://dabblet.com/gist/3748868 */
-/* design: http://themeforest.net/item/minimal-responsive-admin-template/full_screen_preview/7326575?ref=2experts */
+/* design: http://tattek.sk/minimal/ */
+
+@font-face {
+    font-family: 'FontAwesome'; /*a name to be used later*/
+    src: url('fontawesome-webfont.ttf'); /*URL to font*/
+}
 
 * {
     margin: 0;
@@ -11,8 +16,8 @@ html, body {
 }
 
 body {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 36px;
+    padding-bottom: 0px;
     box-sizing: border-box;
 
     background-image: url("noise.png"), url("1.jpg");
@@ -30,9 +35,19 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    height: 19px;
-    border-bottom:1px dotted rgba(0,0,0,.75);
-    background: rgba(0,0,0,.25);
+    height: 36px;
+    background: rgba(0,0,0,.1);
+}
+
+header .logo {
+    text-decoration:none;
+    display:inline-block;
+    width:200px;
+    height:36px;
+    font-size:2em;
+    background:rgba(0,0,0,.1);
+    text-align:center;
+    line-height:1.75em;
 }
 
 nav.left {
@@ -41,8 +56,69 @@ nav.left {
     float: left;
 }
 
+nav.left ul {
+    margin:1em 0 0 0;
+    padding:0;
+    list-style-type: none;
+}
+
+nav.left ul li {
+    margin:0;
+    padding:0;
+}
+
+nav.left > ul > li > a {
+    display:block;
+    margin:0;
+    padding:1em 1em 1em 3em;
+    text-decoration:none;
+    position:relative;
+}
+
+nav.left > ul > li > a:before {
+    content:"";
+    font-family:FontAwesome;
+    font-weight:normal;
+    position:absolute;
+    top:1em;
+    left:1em;
+}
+
+nav.left > ul > li.section > a {
+    background:rgba(0,0,0,.1);
+}
+
+nav.left > ul > li > ul { 
+    margin:0 0 0 3em;
+}
+
+nav.left > ul > li > ul > li:before { 
+    content: "";
+    border-color: transparent #fff;
+    border-style: solid;
+    border-width: 0.35em 0 0.35em 0.45em;
+    display: block;
+    height: 0;
+    width: 0;
+    left: -1em;
+    top: 0.9em;
+    position: relative;
+}
+
+nav.left > ul > li > ul > li > a { 
+    text-decoration:none;
+}
+
+nav.left > ul > li > ul > li.section:before { 
+    border-color: transparent rgb(65, 139, 202);
+}
+
+nav.left > ul > li > ul > li.section > a {
+    color:rgb(65, 139, 202);
+}
+
 nav.right {
-    width: 200px;
+    width: 0px;
     background: rgba(0,0,0,.1);
     float: right;
 }
@@ -61,6 +137,6 @@ footer {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 20px;
+    height: 0px;
     background: rgba(0,0,0,.25);
 }

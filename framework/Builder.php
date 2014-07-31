@@ -37,13 +37,14 @@ class Builder extends Controller
             Database::create_table($base, $model->getProperties());
             $message = array('type' => 'good', 'text' => "table {$base} created");
         } else if (($diff = array_diff_key($model->getProperties(), Database::table($modelclass))) && count($diff)) {
+            $cols = array();
             foreach ($diff as $col => $spec) {
                 $spec = Database::spec($spec);
                 if ($spec === false) continue;
                 Database::query("ALTER TABLE \"{$base}\" ADD COLUMN \"{$col}\" {$spec}");
                 $cols[] = $col;
             }
-            $message = array('type' => 'good', 'text' => "column(s) " . implode(', ', $col) . " for table {$base} created");
+            $message = array('type' => 'good', 'text' => "column(s) " . implode(', ', $cols) . " for table {$base} created");
         }
         return $message;
     }

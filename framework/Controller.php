@@ -112,9 +112,9 @@ abstract class Controller extends Base
         }
 
         if ($this->parent) {
-            $link = $this->parent->currentLink() . '/';
+            $link = rtrim($this->parent->currentLink(), '/') . '/';
         } else {
-            $link = BASE_URL . $this->getName() . '/';
+            $link = rtrim(BASE_URL . $this->getName(), '/') . '/';
         }
 
         return $link . implode('/', $segments);
