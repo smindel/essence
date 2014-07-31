@@ -2,6 +2,10 @@
 
 class ReadonlyFormField extends FormField
 {
+    // todo:
+    // - nested forms return to parent after submit
+    // - readonlyfield can not create new record
+
     public function __toString()
     {
         $name = $this->name;
@@ -14,7 +18,7 @@ class ReadonlyFormField extends FormField
             $metatype = false;
         }
         if ($metatype == 'LOOKUP') {
-            $values = in_array('add', $actions) ? array('<li class="create"><a href="' . $class::create()->link() . '">' . $class . ' erstellen</a></li>') : array();
+            $values = in_array('add', $actions) ? array('<li class="create"><a href="' . $this->currentLink() . 'edit">' . $class . ' erstellen</a></li>') : array();
             foreach ($object->$name as $option) {
                 $values[] = '<li class="edit"><a href="' . $this->currentLink() . 'edit/' . $option->id . '">' . $option->title() . '</a></li>';
             }

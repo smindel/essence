@@ -22,12 +22,6 @@ class Model extends Base
         ),
     );
 
-    public function link()
-    {
-        // @todo: dies wird fuer formfields verwendet, ist aber schlecht, muss raus
-        return Controller::curr()->getParent()->link('edit', get_class($this), $this->id);
-    }
-
     public function getProperty($property, $key = 'type')
     {
         if (!isset($this->db[$property])) return false;
