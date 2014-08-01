@@ -50,7 +50,16 @@ class RelationFormField extends FormField
                 $this->object->$remotefield = $this->parent->getObject();
             }
         }
+
+        $breadcrumbs = array();
+        $curr = $this;
+        while ($curr) {
+            if ($curr instanceof Form) array_unshift($breadcrumbs, "<a href=\"{$curr->link()}\">{$curr->getObject()->title()}</a>");
+            $curr = $curr->getParent();
+        }
+
         $fields = $this->object->getFields();
+        $fields->insertBefore('Header', 'BreadCrumbs', HtmlFormField::create('BreadCrumbs', null, implode(' > ', $breadcrumbs)));
         $form = Form::create($this->name . 'Form', $fields, $this);
 
         return array(

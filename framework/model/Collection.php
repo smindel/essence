@@ -62,6 +62,14 @@ class Collection extends Base implements Iterator, ArrayAccess, Serializable
     public function serialize () { return serialize($this->data); }
     public function unserialize ($serialized) { $this->data = unserialize($serialized); }
 
-    public function shift() { return array_shift($this->data); }
     public function count() { return count($this->data); }
+    public function shift() { return array_shift($this->data); }
+    public function insertBefore($before, $index, $value) {
+        $data = array();
+        foreach ($this->data as $key => $val) {
+            if ($key == $before) $data[$index] = $value;
+            $data[$key] = $val;
+        }
+        $this->data = $data;
+    }
 }

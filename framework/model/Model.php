@@ -68,7 +68,10 @@ class Model extends Base
 
     public function getFields()
     {
-        $fields = Collection::create(array('SecurityID' => SecurityTokenFormField::create('SecurityID')));
+        $fields = Collection::create(array(
+            'Header' => HtmlFormField::create('Header', null, "<h1>{$this->title()}</h1>"),
+            'SecurityID' => SecurityTokenFormField::create('SecurityID'),
+        ));
         foreach ($this->getProperties('field') as $key => $fieldtype) {
             if (!$fieldtype) continue;
             list($fieldclass) = explode(':', $fieldtype);
