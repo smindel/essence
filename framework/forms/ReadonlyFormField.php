@@ -52,12 +52,12 @@ class ReadonlyFormField extends FormField
     public function form_save(Form $form)
     {
         $this->object->hydrate($form->getData())->write();
-        $this->redirect($this->link('edit', get_class($this->object), $this->object->id));
+        $this->redirect($this->link($this->name, 'edit', $this->object->id));
     }
 
     public function form_delete(Form $form)
     {
         $this->object->delete();
-        $this->redirect($this->link('index', get_class($this->object)));
+        $this->redirect($this->link($this->name, 'index'));
     }
 }
