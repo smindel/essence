@@ -3,7 +3,6 @@
 class ReadonlyFormField extends FormField
 {
     // todo:
-    // - readonlyfield can not create new record
     // - make form::handleRequest inherit from controller::handleRequest and use beforeHandle and afterRender
 
     public function __toString()
@@ -44,16 +43,18 @@ class ReadonlyFormField extends FormField
 
     public function edit_action($id)
     {
-        $this->object = $this->parent->getObject()->{$this->name}()[$id];
+        if (($remoteoptions = $this->parent->getObject()->{$this->name}()) && isset($remoteoptions[$id])) {
+            $this->object = $remoteoptions[$id];
+        } else {
+            list($type, $remoteclass, $remotefield) = explode(':', $this->parent->getObject()->getProperty($this->name));
+            if ($type == 'LOOKUP') {
+                $this->object = $remoteclass::create();
+                $this->object->$remotefield = $this->parent->getObject();
+            }
+        }
         $fields = $this->object->getFields();
         $form = Form::create($this->name . 'Form', $fields, $this, __FUNCTION__);
         $form->setAction($this->link('edit', $id));
-        // aDebug(
-        //     $this->currentLink(),
-        //     $this->link(),
-        //     $this->parent->currentLink(),
-        //     $this->consumed
-        // );
         return array(
             'Form' => $form->handleRequest($this->request),
         );
