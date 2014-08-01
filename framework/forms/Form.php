@@ -70,12 +70,12 @@ class Form extends Controller
         // if there are unconsumed request segments handle or forward them
         $data = false;
         if (method_exists($this, $this->request->peek() . '_action')) {
-            $data = $this->handleAction(($method = $this->request->consume()));
+            $data = $this->handleAction(($method = $this->consume()));
             if (!is_string($data)) {
                 $data = $this->render($method, $data);
             }
         } else if (isset($this->fields[$this->request->peek() ?: 0])) {
-            $data = $this->fields[$this->request->consume()]->handleRequest($this->request);
+            $data = $this->fields[$this->consume()]->handleRequest($this->request);
         }
 
         if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);

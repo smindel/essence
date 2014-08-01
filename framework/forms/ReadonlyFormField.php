@@ -3,8 +3,8 @@
 class ReadonlyFormField extends FormField
 {
     // todo:
-    // - nested forms return to parent after submit
     // - readonlyfield can not create new record
+    // - make form::handleRequest inherit from controller::handleRequest and use beforeHandle and afterRender
 
     public function __toString()
     {
@@ -18,9 +18,9 @@ class ReadonlyFormField extends FormField
             $metatype = false;
         }
         if ($metatype == 'LOOKUP') {
-            $values = in_array('add', $actions) ? array('<li class="create"><a href="' . $this->currentLink() . 'edit">' . $class . ' erstellen</a></li>') : array();
+            $values = in_array('add', $actions) ? array('<li class="create"><a href="' . $this->relationLink() . '">' . $class . ' erstellen</a></li>') : array();
             foreach ($object->$name as $option) {
-                $values[] = '<li class="edit"><a href="' . $this->currentLink() . 'edit/' . $option->id . '">' . $option->title() . '</a></li>';
+                $values[] = '<li class="edit"><a href="' . $this->relationLink($option->id) . '">' . $option->title() . '</a></li>';
             }
             $value = "<ul id=\"{$this->name}\">" . implode($values) . '</ul>';
         } else {
@@ -37,13 +37,23 @@ class ReadonlyFormField extends FormField
         return $this->object;
     }
 
+    public function relationLink($id = false)
+    {
+        return $this->currentLink() . $this->name . '/edit/' . $id;
+    }
+
     public function edit_action($id)
     {
         $this->object = $this->parent->getObject()->{$this->name}()[$id];
         $fields = $this->object->getFields();
         $form = Form::create($this->name . 'Form', $fields, $this, __FUNCTION__);
-        $form->setAction($this->link($this->name, 'edit', $id));
-
+        $form->setAction($this->link('edit', $id));
+        // aDebug(
+        //     $this->currentLink(),
+        //     $this->link(),
+        //     $this->parent->currentLink(),
+        //     $this->consumed
+        // );
         return array(
             'Form' => $form->handleRequest($this->request),
         );
@@ -52,12 +62,12 @@ class ReadonlyFormField extends FormField
     public function form_save(Form $form)
     {
         $this->object->hydrate($form->getData())->write();
-        $this->redirect($this->link($this->name, 'edit', $this->object->id));
+        $this->redirect($this->link('edit', $this->object->id));
     }
 
     public function form_delete(Form $form)
     {
         $this->object->delete();
-        $this->redirect($this->link($this->name, 'index'));
+        $this->redirect($this->link('index'));
     }
 }

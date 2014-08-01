@@ -78,12 +78,6 @@ abstract class FormField extends Controller
         return in_array($guess, $htmltypes) ? $guess : false;
     }
 
-    public function currentLink()
-    {
-        $link = $this->parent ? $this->parent->currentLink() : BASE_URL;
-        return $link . $this->getName() . '/' . implode('/', func_get_args());
-    }
-
     public function validate($value)
     {
         return isset($this->validator) ? call_user_func($this->validator, $value, $this, $form) : true;
