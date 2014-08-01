@@ -6,7 +6,7 @@ abstract class Controller extends Base
 
     protected $request;
     protected $parent;
-    protected $method;
+    protected $method = 'index';
     protected $response;
     protected $consumed = array();
     protected $redirect;
@@ -21,13 +21,15 @@ abstract class Controller extends Base
         self::$_curr = $this;
         $this->request = $request;
 
+        $this->method = $this->consume() ?: 'index';
+
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $this->response = $this->handleAction(($this->method = $this->consume() ?: 'index'));
+        $this->response = $this->handleAction($this->method) ?: array();
 
-        if (method_exists($this, 'afterRender')) $this->response = $this->afterRender($this->response);
+        if (method_exists($this, 'beforeRender')) $this->beforeRender();
 
-        return (string)$this;
+        return $this->__toString();
     }
 
     public function consume($numsegments = false)
@@ -47,6 +49,18 @@ abstract class Controller extends Base
         $params = $this->consume(count($reflectionmethod->getParameters()));
 
         return $reflectionmethod->invokeArgs($this, $params);
+    }
+
+    public function getLayout($method = 'LAYOUT')
+    {
+        $i = 0;
+        $class = get_class($this);
+        $template = $class . '.' . $method;
+        while (!($exists = View::exists($template)) && $class && $i < 10) {
+            $class = get_parent_class($class);
+            $template = $class . '.' . $method;
+        }
+        return $exists ? $template : false;
     }
 
     public function __toString()
@@ -73,18 +87,6 @@ abstract class Controller extends Base
     public function getParent()
     {
         return $this->parent;
-    }
-
-    public function getLayout($method = 'LAYOUT')
-    {
-        $i = 0;
-        $class = get_class($this);
-        $template = $class . '.' . $method;
-        while (!($exists = View::exists($template)) && $class && $i < 10) {
-            $class = get_parent_class($class);
-            $template = $class . '.' . $method;
-        }
-        return $exists ? $template : false;
     }
 
     public function redirect($url, $code = 302)

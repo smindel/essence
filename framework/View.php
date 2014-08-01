@@ -41,7 +41,7 @@ class View extends Base
 
         $cachedtemplate = 'cache' . DIRECTORY_SEPARATOR . str_replace(DIRECTORY_SEPARATOR, '.', $template);
 
-        if (ENV_TYPE == 'dev' && isset($_REQUEST['flush']) || !file_exists($cachedtemplate)) {
+        if (1) { // ENV_TYPE == 'dev' && isset($_REQUEST['flush']) || !file_exists($cachedtemplate)) {
             file_put_contents($cachedtemplate, preg_replace(array(
                 '/\{\{\{/',
                 '/\}\}\}/',

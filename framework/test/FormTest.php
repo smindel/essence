@@ -151,7 +151,7 @@ class FormTest_Controller extends Controller
 
         if ($this->request->getRaw('IgnoreSecurityToken')) unset($fields['SecurityID']);
 
-        $form = Form::create('FormTest_ModelForm', $fields, $this, __FUNCTION__);
+        $form = Form::create('FormTest_ModelForm', $fields, $this);
         $form->setAction($this->link('edit', 'FormTest_Model', $id));
 
         return array(

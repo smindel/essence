@@ -66,8 +66,7 @@ class Admin extends Controller
     public function edit_action($model, $id = null) {
         $this->object = $model::one($id) ?: $model::create();
         $fields = $this->object->getFields();
-        $form = Form::create($model . 'Form', $fields, $this, __FUNCTION__);
-        $form->setAction($this->link('edit', $model, $id));
+        $form = Form::create($model . 'Form', $fields, $this);
 
         return array(
             'Form' => $form->handleRequest($this->request),

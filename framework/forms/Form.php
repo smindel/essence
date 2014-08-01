@@ -3,11 +3,13 @@
 class Form extends Controller
 {
     protected $name;
-    protected $method;
     protected $fields;
     protected $action;
 
-    public function __construct($name, $fields, $controller, $method)
+    // alle formfield::tostring methods muessen gegen index_actions ersetzt werden,
+    // entsprechende formfield.index.inc templates muessen erstellt werden
+
+    public function __construct($name, $fields, $controller)
     {
         $this->name = $name;
         if (is_array($fields)) {
@@ -18,7 +20,6 @@ class Form extends Controller
         }
 
         $this->parent = $controller;
-        $this->method = $method;
         $this->fields = $fieldcollection;
 
         foreach ($fields as $field) $field->setForm($this);
@@ -39,16 +40,11 @@ class Form extends Controller
         aDebug(__CLASS__, __FUNCTION__, func_get_args());
     }
 
-    public function handleRequest($request)
+    public function index_action()
     {
-        self::$_curr = $this;
-        $this->request = $request;
-
-        if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
-
         // does the current request carry a form submission
         // capture the form action selected
-        $submitteddata = $request->getRaw($this->name) ?: array();
+        $submitteddata = $this->request->getRaw($this->name) ?: array();
         $error = $callback = false;
         foreach ($this->fields as $field) {
             $submittedvalue = isset($submitteddata[$field->getName()]) ? $submitteddata[$field->getName()] : null;
@@ -67,28 +63,18 @@ class Form extends Controller
             $field->setValue($submittedvalue);
         }
 
-        // if there are unconsumed request segments handle or forward them
-        $data = false;
-        if (method_exists($this, $this->request->peek() . '_action')) {
-            $data = $this->handleAction(($method = $this->consume()));
-            if (!is_string($data)) {
-                $data = $this->render($method, $data);
-            }
-        } else if (isset($this->fields[$this->request->peek() ?: 0])) {
-            $data = $this->fields[$this->consume()]->handleRequest($this->request);
-        }
-
-        if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);
-
         if ($error) {
             return $this->redirectBack();
         } else if ($callback) {
             return call_user_func($callback, $this);
-        } else if ($data) {
-            return $data;
         } else {
-            return $this;
+            return array();
         }
+    }
+
+    public function fields_action($field)
+    {
+        return $this->fields[$field]->handleRequest($this->request);
     }
 
     public function getData()
@@ -100,14 +86,9 @@ class Form extends Controller
         return $data;
     }
 
-    public function getController()
-    {
-        return $this->parent;
-    }
-
     public function getObject()
     {
-        return method_exists($this->getController(), 'getObject') ? $this->getController()->getObject() : false;
+        return method_exists($this->parent, 'getObject') ? $this->parent->getObject() : false;
     }
 
     public function setAction($action)
@@ -119,11 +100,6 @@ class Form extends Controller
     public function getAction()
     {
         return $this->action ?: $this->request->getUri(true);
-    }
-
-    public function __toString()
-    {
-        return Collection::create(array('Me' => $this))->renderWith('form');
     }
 
     public function redirectBack()

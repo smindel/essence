@@ -17,7 +17,7 @@ class Model extends Base
         ),
         'children' => array(
             'type' => 'LOOKUP:RemoteClassName:RemoteJoinField',
-            'field' => 'HasManyFormField|ReadonlyFormField:add',
+            'field' => 'HasManyFormField|RelationFormField:add',
             'label' => 'Children',
         ),
     );

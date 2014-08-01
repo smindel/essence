@@ -103,9 +103,4 @@ abstract class FormField extends Controller
         }
         return $msg;
     }
-
-    public function __toString()
-    {
-        return '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label><input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\" data-fyi-url=\"" . $this->currentLink() . "\"></div>";
-    }
 }
