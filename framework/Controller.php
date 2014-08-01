@@ -4,8 +4,10 @@ abstract class Controller extends Base
 {
     protected static $_curr;
 
-    protected $parent;
     protected $request;
+    protected $parent;
+    protected $method;
+    protected $response;
     protected $consumed = array();
     protected $redirect;
 
@@ -21,11 +23,11 @@ abstract class Controller extends Base
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $data = $this->handleAction($this->consume() ?: 'index');
+        $this->response = $this->handleAction(($this->method = $this->consume() ?: 'index'));
 
-        if (method_exists($this, 'afterRender')) $data = $this->afterRender($data);
+        if (method_exists($this, 'afterRender')) $this->response = $this->afterRender($this->response);
 
-        return $data;
+        return (string)$this;
     }
 
     public function consume($numsegments = false)
@@ -44,24 +46,21 @@ abstract class Controller extends Base
         $reflectionmethod = new ReflectionMethod($this, $method . '_action');
         $params = $this->consume(count($reflectionmethod->getParameters()));
 
-        $data = $reflectionmethod->invokeArgs($this, $params);
-
-        if (!is_string($data)) {
-            $data = $this->render($method, $data);
-        }
-        return $data;
+        return $reflectionmethod->invokeArgs($this, $params);
     }
 
-    public function render($method, $data)
+    public function __toString()
     {
         if ($this->redirect) return '';
 
-        $data['Me'] = $this;
-        $layout = $this->getLayout($method);
-        $output = View::create($layout)->render($data);
+        if (is_string($this->response)) return $this->response;
+
+        $this->response['Me'] = $this;
+        $layout = $this->getLayout($this->method);
+        $output = View::create($layout)->render($this->response);
         if (!$this->parent && !$this->getRequest()->isAjax() && ($layout = $this->getLayout())) {
-            $data['_CONTENT_'] = $output;
-            $output = View::create($layout)->render($data);
+            $this->response['_CONTENT_'] = $output;
+            $output = View::create($layout)->render($this->response);
         }
         return $output;
     }
