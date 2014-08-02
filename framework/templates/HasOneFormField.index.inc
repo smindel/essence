@@ -9,7 +9,7 @@
                     id="{{{$Me->getName()}}}[{{{$option->id}}}]"
                     type="radio"
                     value="{{{$option->id}}}" {{{($option->id == $Me->getValue() ? ' checked' : '')}}}>
-                <a href="{{{$Me->relationLink($option->id)}}}">{{{$option->title()}}}</a>
+                <a{{ if ($Me->getParent()->getObject()->id): }} href="{{{$Me->relationLink($option->id)}}}"{{ endif; }}>{{{$option->title()}}}</a>
             </div>
         {{ endforeach; }}
     <!-- </ul> -->

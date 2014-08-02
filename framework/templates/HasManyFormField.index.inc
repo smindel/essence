@@ -10,7 +10,7 @@
                     type="checkbox"
                     value="{{{$option->id}}}" {{{($option->$Remotefield->id == $Object->id ? ' checked' : '')}}}
                     disabled="">
-                <a href="{{{$Me->relationLink($option->id)}}}">{{{$option->title()}}}</a>
+                <a{{ if ($Me->getParent()->getObject()->id): }} href="{{{$Me->relationLink($option->id)}}}"{{ endif; }}>{{{$option->title()}}}</a>
             </div>
         {{ endforeach; }}
     <!-- </ul> -->
