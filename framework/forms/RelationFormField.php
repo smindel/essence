@@ -39,7 +39,7 @@ class RelationFormField extends FormField
         return $this->currentLink() . 'fields/' . $this->name . '/edit/' . $id;
     }
 
-    public function edit_action($id)
+    public function getForm($id)
     {
         if (($remoteoptions = $this->parent->getObject()->{$this->name}()) && isset($remoteoptions[$id])) {
             $this->object = $remoteoptions[$id];
@@ -60,17 +60,25 @@ class RelationFormField extends FormField
 
         $fields = $this->object->getFields();
         $fields->insertBefore('Header', 'BreadCrumbs', HtmlFormField::create('BreadCrumbs', null, implode(' > ', $breadcrumbs)));
-        $form = Form::create($this->name . 'Form', $fields, $this);
+        return Form::create($this->name . 'Form', $fields, $this);
+    }
 
+    public function edit_action($id)
+    {
         return array(
-            'Form' => $form->handleRequest($this->request),
+            'Form' => $this->getForm($id)->handleRequest($this->request),
         );
     }
 
     public function form_save(Form $form)
     {
         $this->object->hydrate($form->getData())->write();
-        $this->redirect($this->link('edit', $this->object->id));
+        if ($this->request->getRaw($form->getName(), '_show_parent')) {
+            $redirect = $this->getParent()->link();
+        } else {
+            $redirect = $this->link('edit', $this->object->id);
+        }
+        $this->redirect($redirect);
     }
 
     public function form_delete(Form $form)

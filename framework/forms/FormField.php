@@ -54,6 +54,7 @@ abstract class FormField extends Controller
     public function setForm(Form $form)
     {
         $this->parent = $form;
+        return $this;
     }
 
     public function getId()

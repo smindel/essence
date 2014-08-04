@@ -35,11 +35,6 @@ class Form extends Controller
         return $this->fields;
     }
 
-    public function test_action($arg1, $arg2)
-    {
-        aDebug(__CLASS__, __FUNCTION__, func_get_args());
-    }
-
     public function index_action()
     {
         // does the current request carry a form submission

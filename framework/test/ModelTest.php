@@ -44,7 +44,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testRealtions()
     {
         Builder::create()->build('ModelTest_Model');
-        Builder::create()->build('ModelTestChild_Model');
+        Builder::create()->build('ModelTest_ModelChild');
 
         $parent1 = ModelTest_Model::create();
         $parent1->Name = 'Andy';
@@ -54,15 +54,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $parent2->Name = 'Robert';
         $parent2->write();
 
-        $child1 = ModelTestChild_Model::create();
+        $child1 = ModelTest_ModelChild::create();
         $child1->Name = 'Yoko';
         $child1->write();
 
-        $child2 = ModelTestChild_Model::create();
+        $child2 = ModelTest_ModelChild::create();
         $child2->Name = 'Milli';
         $child2->write();
 
-        $child3 = ModelTestChild_Model::create();
+        $child3 = ModelTest_ModelChild::create();
         $child3->Name = 'Paula';
         $child3->write();
 
@@ -91,11 +91,11 @@ class ModelTest_Model extends Model
     protected $db = array(
         'id' => array('type' => 'ID'),
         'Name' => array(),
-        'Children' => array('type' => 'LOOKUP:ModelTestChild_Model:Daddy'),
+        'Children' => array('type' => 'LOOKUP:ModelTest_ModelChild:Daddy'),
     );
 }
 
-class ModelTestChild_Model extends Model
+class ModelTest_ModelChild extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),

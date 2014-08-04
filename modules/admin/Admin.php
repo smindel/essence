@@ -30,7 +30,7 @@ class Admin extends Controller
         $items = array();
         foreach (self::$managed_models as $model) {
             $items[$model] = array(
-                'Status' => $curr->getModel() == $model ? 'section' : 'link',
+                'Status' => strtolower($curr->getModel()) == strtolower($model) ? 'section' : 'link',
                 'Link' => $curr->link('list', $model),
                 'Title' => $model,
             );
@@ -76,7 +76,12 @@ class Admin extends Controller
     public function form_save(Form $form)
     {
         $this->object->hydrate($form->getData())->write();
-        $this->redirect($this->link('edit', get_class($this->object), $this->object->id));
+        if ($this->request->getRaw($form->getName(), '_show_parent')) {
+            $redirect = $this->link('list', get_class($this->object));
+        } else {
+            $redirect = $this->link('edit', get_class($this->object), $this->object->id);
+        }
+        $this->redirect($redirect);
     }
 
     public function form_delete(Form $form)

@@ -68,8 +68,15 @@ class Request extends Base
         return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
     }
 
-    public function getRaw($name)
+    public function getRaw()
     {
-        return isset($this->requestdata[$name]) ? $this->requestdata[$name] : null;
+        $args = func_get_args();
+        $raw = $this->requestdata;
+        while (count($args)) {
+            $curr = array_shift($args);
+            if (!isset($raw[$curr])) return null;
+            $raw = $raw[$curr];
+        }
+        return $raw;
     }
 }

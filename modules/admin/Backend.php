@@ -35,7 +35,7 @@ class Backend extends Controller
             $items[$managerclass] = array(
                 'Title' => $manager->getName(),
                 'Link' => $manager->link(),
-                'Status' => $manager->getName() == $this->getPanel()->getName() ? 'section' : 'link',
+                'Status' => strtolower($manager->getName()) == strtolower($this->getPanel()->getName()) ? 'section' : 'link',
                 'Menu' => $manager->menu(),
             );
         }

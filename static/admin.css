@@ -1,6 +1,7 @@
 body { font-family:Helvetica; font-size:12px; }
 a { color:white; }
-ul { margin:0 0 1em; padding:0 2em 0; }
+ul { margin:0 0 1em;padding:0 2em 0; }
+ul li {margin:0 0 .5em 1em;}
 
 .light {
     background-color: rgba(255, 255, 255, 0.15);
@@ -23,7 +24,7 @@ button, input, select, textarea {
   font-size   : 100%;
 }
 label { display:inline; font-weight:bold; }
-select, button, input, textarea { display:block; border:1px solid #aaa; border-radius:5px; padding:3px 10px; }
+select, button, input, textarea { display:block; border:1px solid #aaa; border-radius:5px; padding:3px 10px; color:rgb(65, 139, 202);}
 input[type="radio"], input[type="checkbox"] { display:inline; }
 input[type="submit"], input[type="button"] {
     color: #000000;
@@ -36,10 +37,27 @@ input[type="submit"], input[type="button"] {
     box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,0.7);
     text-shadow: 0px -1px 0px rgba(255,255,255,0.4), 0px 1px 0px rgba(0,0,0,0.3);
 }
-li.list { list-style-image:url(icons/database_go.png); }
-li.edit { list-style-image:url(icons/database_edit.png); }
-li.create { list-style-image:url(icons/database_add.png); }
+li.list, li.edit, li.create {
+    position:relative;
+    list-style-type:none;
+}
+li.list:before, li.edit:before, li.create:before {
+    font-family:FontAwesome;
+    display:block;
+    width:20px;
+    color:white;
+    position:absolute;
+    top:0;
+    left:-14px;
+    height:20px;
+}
+li.list:before { content:""; }
+li.edit:before { content:""; }
+li.create:before { content:""; }
+
 .error { font-weight:bold; color:#a00; }
 .field { margin:1em 0; }
 .SubmitFormField { display:inline-block; }
 /* [data-fyi-url]:before { content: attr(data-fyi-url); } */
+
+button span { font-family:FontAwesome; }
