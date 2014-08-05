@@ -207,6 +207,13 @@ class FormTest_Controller extends Controller
         return Form::create('FormTest_ModelForm', $fields, $this);
     }
 
+    public function index_action() {
+
+        return array(
+            'List' => 'List',
+        );
+    }
+
     public function edit_action($id = null) {
 
         return array(

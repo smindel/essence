@@ -65,7 +65,9 @@ abstract class Controller extends Base
 
     public function __toString()
     {
-        if ($this->redirect) return '';
+        if ($this->redirect) {
+            return $this->parent ? '' : Request::create(Request::relative_url($this->redirect))->handle();
+        }
 
         if (is_string($this->response)) return $this->response;
 
@@ -91,7 +93,7 @@ abstract class Controller extends Base
 
     public function redirect($url, $code = 302)
     {
-        $this->redirect = true;
+        $this->redirect = $url;
         if (PHP_SAPI == 'cli') {
             if ($this->parent) $this->parent->redirect($url, $code);
         } else {
