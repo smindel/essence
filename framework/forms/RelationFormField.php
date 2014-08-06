@@ -10,22 +10,31 @@ class RelationFormField extends FormField
         parent::setForm($form);
 
         $options = array();
-        $create = false;
+        $create = $join = $setnull = false;
         $name = $this->name;
         $object = $this->parent->getObject();
         if (($field = $object->getProperty($name, 'field'))) {
             list(, $action) = explode(':', $field . ':');
             $actions = explode('|', $action);
-            list($metatype, $class, $remotefield) = explode(':', $object->getProperty($name));
-            if ($metatype == 'LOOKUP' && in_array('add', $actions)) $create = $class;
+            list($metatype, $class, $option) = explode(':', $object->getProperty($name) . ':SET NULL');
+            if ($metatype == 'LOOKUP') {
+                if (in_array('add', $actions)) $create = $class;
+                if (in_array('join', $actions)) $join = $class;
+            }
+            if ($metatype == 'FOREIGN') {
+                if (in_array('add', $actions) && $option == 'SET NULL' || !$object->$name) $create = $class;
+                if (in_array('join', $actions)) $join = $class;
+                if ($option == 'SET NULL') $setnull = 'kein(e) ' . $class;
+            }
         }
-
         $this->response = array(
             'Object' => $object,
             'Create' => $create,
+            'Join' => $join,
+            'SetNull' => $setnull,
             'Options' => $object->$name(),
             'Value' => $object->$name,
-            'Remotefield' => $remotefield,
+            'Remotefield' => $option,
         );
     }
 
@@ -44,10 +53,12 @@ class RelationFormField extends FormField
         if (($remoteoptions = $this->parent->getObject()->{$this->name}()) && isset($remoteoptions[$id])) {
             $this->object = $remoteoptions[$id];
         } else {
-            list($type, $remoteclass, $remotefield) = explode(':', $this->parent->getObject()->getProperty($this->name));
+            list($type, $remoteclass, $remotefield) = explode(':', $this->parent->getObject()->getProperty($this->name) . ':SET NULL');
             if ($type == 'LOOKUP') {
                 $this->object = $remoteclass::create();
                 $this->object->$remotefield = $this->parent->getObject();
+            } else if ($type == 'FOREIGN') {
+                $this->object = $remoteclass::create();
             }
         }
 

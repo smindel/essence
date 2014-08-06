@@ -107,6 +107,11 @@ abstract class Controller extends Base
         $this->redirect($_SERVER['HTTP_REFERER']);
     }
 
+    public function baseLink()
+    {
+        return rtrim($this->parent ? $this->parent->currentLink() : BASE_URL . $this->getName(), '/') . '/';
+    }
+
     public function link()
     {
         $segments = func_get_args();
@@ -114,13 +119,7 @@ abstract class Controller extends Base
             $segments = $segments[0];
         }
 
-        if ($this->parent) {
-            $link = rtrim($this->parent->currentLink(), '/') . '/';
-        } else {
-            $link = rtrim(BASE_URL . $this->getName(), '/') . '/';
-        }
-
-        return $link . implode('/', $segments);
+        return $this->baseLink() . implode('/', $segments);
     }
 
     public function currentLink()

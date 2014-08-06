@@ -2,8 +2,6 @@
 
 class Admin extends Controller
 {
-    public static $managed_models = array();
-
     protected $object;
 
     public function beforeHandle($request)
@@ -13,9 +11,14 @@ class Admin extends Controller
         Authentication::challenge();
     }
 
+    public function baseLink()
+    {
+        return $this->parent->link('panel', $this->getName()) . '/';
+    }
+
     public function getModel()
     {
-        return $this->consumed[1];
+        return is_array($this->consumed) && count($this->consumed) > 1 ? $this->consumed[1] : static::$managed_models[0];
     }
 
     public function getObject()
@@ -25,13 +28,12 @@ class Admin extends Controller
 
     public function Menu()
     {
-        $curr = Controller::curr();
-        while ($curr && !($curr instanceof self)) $curr = $curr->getParent();
+        list(, , , , $currmodel) = explode('/', $this->getParent()->getRequest()->getUri());
         $items = array();
-        foreach (self::$managed_models as $model) {
+        if (count(static::$managed_models) > 1) foreach (static::$managed_models as $model) {
             $items[$model] = array(
-                'Status' => strtolower($curr->getModel()) == strtolower($model) ? 'section' : 'link',
-                'Link' => $curr->link('list', $model),
+                'Status' => strtolower($currmodel) == strtolower($model) ? 'section' : 'link',
+                'Link' => $this->link('list', $model),
                 'Title' => $model,
             );
         }
@@ -39,7 +41,7 @@ class Admin extends Controller
     }
 
     public function index_action() {
-        $this->redirect($this->link('list', reset(self::$managed_models)));
+        $this->redirect($this->link('list', reset(static::$managed_models)));
     }
 
     public function list_action($model) {
@@ -75,6 +77,7 @@ class Admin extends Controller
 
     public function form_save(Form $form)
     {
+        // aDebug($form->getData());die();
         $this->object->hydrate($form->getData())->write();
         if ($this->request->getRaw($form->getName(), '_show_parent')) {
             $redirect = $this->link('list', get_class($this->object));

@@ -52,8 +52,8 @@ class Collection extends Base implements Iterator, ArrayAccess, Serializable
 
     public function current () { return current($this->data); }
     public function key () { return key($this->data); }
-    public function next () { next($this->data); }
-    public function rewind () { reset($this->data); }
+    public function next () { return next($this->data); }
+    public function rewind () { return reset($this->data); }
     public function valid () { return $this->key(); }
     public function offsetExists ($offset) { return array_key_exists($offset, $this->data); }
     public function offsetGet ($offset) { return $this->data[$offset]; }

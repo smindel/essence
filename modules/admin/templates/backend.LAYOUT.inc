@@ -10,7 +10,7 @@
 <body data-fyi-url="{{ if (isset($Me)) echo $Me->currentLink(); }}">
     <header>
         <a href="{{{$Me->link()}}}" class="logo">ESSENCE</a>
-        <a href="backend/panel/admin/edit/user/{{{Authentication::user()->id}}}">{{{Authentication::user()->Name}}}</a>
+        <a href="backend/panel/UserManager/edit/user/{{{Authentication::user()->id}}}">{{{Authentication::user()->Name}}}</a>
         <a href="authentication/logout">logout</a>
     </header>
     <nav class="left">

@@ -146,7 +146,7 @@ class Model extends Base
             if ($metatype == 'FOREIGN') {
                 return isset($this->db[$key]['value']) ? $class::one($this->db[$key]['value']) : null;
             } else if ($metatype == 'LOOKUP') {
-                return isset($this->db['id']['value']) ? $class::get($param, $this->db['id']['value']) : array();
+                return isset($this->db['id']['value']) ? $class::get($param, $this->db['id']['value']) : Collection::create();
             } else {
                 return isset($this->db[$key]['value']) ? $this->db[$key]['value'] : null;
             }
@@ -189,7 +189,6 @@ class Model extends Base
             list($metatype, $class, $param) = explode(':', $this->getProperty($key) . ':SET NULL');
             if ($metatype == 'FOREIGN') {
                 $options = $class::get();
-                if ($param == 'SET NULL') array_unshift($options, $class::create());
                 return $options;
             } else if ($metatype == 'LOOKUP') {
                 return $class::get();
@@ -202,7 +201,9 @@ class Model extends Base
     public function hydrate($record)
     {
         foreach ($record as $key => $val) {
-            if (!isset($this->db[$key])) continue;
+            list($type) = explode(':', $this->getProperty($key) ?: '');
+            if (!$type) continue;
+            if ($type == 'FOREIGN' && !$val) $val = null;
             $this->db[$key]['value'] = $val;
         }
         return $this;
