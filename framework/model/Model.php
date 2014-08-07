@@ -11,13 +11,13 @@ class Model extends Base
         ),
         'parent' => array(
             'type' => 'FOREIGN:RemoteClassName:|RESTRICT|CASCADE(|SET NULL)',
-            'field' => 'HasOneFormField',
+            'field' => 'HasOneFormField:add|join',
             'label' => 'Parent',
             'value' => null
         ),
         'children' => array(
             'type' => 'LOOKUP:RemoteClassName:RemoteJoinField',
-            'field' => 'HasManyFormField|RelationFormField:add',
+            'field' => 'HasManyFormField:add|join',
             'label' => 'Children',
         ),
     );

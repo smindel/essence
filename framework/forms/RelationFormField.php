@@ -5,42 +5,69 @@ class RelationFormField extends FormField
     // ATTENTION: this is not the object of the parent form but the child form
     protected $object;
 
-    public function setForm(Form $form)
-    {
-        parent::setForm($form);
-
-        $options = array();
-        $create = $join = $setnull = false;
-        $name = $this->name;
-        $object = $this->parent->getObject();
-        if (($field = $object->getProperty($name, 'field'))) {
-            list(, $action) = explode(':', $field . ':');
-            $actions = explode('|', $action);
-            list($metatype, $class, $option) = explode(':', $object->getProperty($name) . ':SET NULL');
-            if ($metatype == 'LOOKUP') {
-                if (in_array('add', $actions)) $create = $class;
-                if (in_array('join', $actions)) $join = $class;
-            }
-            if ($metatype == 'FOREIGN') {
-                if (in_array('add', $actions) && $option == 'SET NULL' || !$object->$name) $create = $class;
-                if (in_array('join', $actions)) $join = $class;
-                if ($option == 'SET NULL') $setnull = 'kein(e) ' . $class;
-            }
-        }
-        $this->response = array(
-            'Object' => $object,
-            'Create' => $create,
-            'Join' => $join,
-            'SetNull' => $setnull,
-            'Options' => $object->$name(),
-            'Value' => $object->$name,
-            'Remotefield' => $option,
-        );
-    }
-
     public function getObject()
     {
-        return $this->object;
+        if ($this->object) return $this->object;
+        $name = $this->name;
+        return $this->parent->getObject()->$name;
+    }
+
+    public function getOptions()
+    {
+        $name = $this->name;
+        return $this->parent->getObject()->$name();
+    }
+
+    public function getRemainingOptions()
+    {
+        $name = $this->name;
+        $remaining = array();
+        $parentobject = $this->getParent()->getObject();
+        list(,,$remotejoinfield) = explode(':', $parentobject->getProperty($name));
+        foreach ($this->getOptions() as $id => $option) {
+            if (!$option->$remotejoinfield || $option->$remotejoinfield->id != $parentobject->id) $remaining[$option->id] = $option;
+        }
+        return Collection::create($remaining);
+    }
+
+    public function canCreate()
+    {
+        $name = $this->name;
+        $parentobject = $this->getParent()->getObject();
+        if (($field = $parentobject->getProperty($name, 'field'))) {
+            list(, $action) = explode(':', $field . ':');
+            $actions = explode('|', $action);
+            list($metatype, $class, $option) = explode(':', $parentobject->getProperty($this->name) . ':SET NULL');
+            if ($metatype == 'LOOKUP' && in_array('add', $actions)) {
+                return $class;
+            } else if ($metatype == 'FOREIGN' && in_array('add', $actions) && $option == 'SET NULL' || !$parentobject->$name) {
+                return $class;
+            }
+        }
+        return false;
+    }
+
+    public function canJoin()
+    {
+        $name = $this->name;
+        $parentobject = $this->getParent()->getObject();
+        if (($field = $parentobject->getProperty($name, 'field'))) {
+            list(, $action) = explode(':', $field . ':');
+            $actions = explode('|', $action);
+            list($metatype, $class, $option) = explode(':', $parentobject->getProperty($this->name) . ':SET NULL');
+            if ($metatype == 'LOOKUP' && in_array('join', $actions)) {
+                return $class;
+            } else if ($metatype == 'FOREIGN' && in_array('join', $actions)) {
+                return $class;
+            }
+        }
+        return false;
+    }
+
+    public function canSetNull()
+    {
+        list($metatype, $class, $option) = explode(':', $this->getParent()->getObject()->getProperty($this->name) . ':SET NULL');
+        return $metatype == 'FOREIGN' && $option == 'SET NULL' ? $class : false;
     }
 
     public function relationLink($id = false)
