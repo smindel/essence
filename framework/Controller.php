@@ -21,7 +21,7 @@ abstract class Controller extends Base
         self::$_curr = $this;
         $this->request = $request;
 
-        $this->method = $this->consume() ?: 'index';
+        $this->method = $this->consume() ?: $this->method;
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
@@ -55,30 +55,36 @@ abstract class Controller extends Base
     {
         $i = 0;
         $class = get_class($this);
-        $template = $class . '.' . $method;
+        $template = $class;
+        if ($method) $template .= '.' . $method;
         while (!($exists = View::exists($template)) && $class && $i < 10) {
             $class = get_parent_class($class);
-            $template = $class . '.' . $method;
+            $template = $class;
+            if ($method) $template .= '.' . $method;
         }
         return $exists ? $template : false;
     }
 
     public function __toString()
     {
-        if ($this->redirect) {
-            return $this->parent ? '' : Request::create(Request::relative_url($this->redirect))->handle();
-        }
+        try {
+            if ($this->redirect) {
+                return $this->parent ? '' : Request::create(Request::relative_url($this->redirect))->handle();
+            }
 
-        if (is_string($this->response)) return $this->response;
+            if (is_string($this->response)) return $this->response;
 
-        $this->response['Me'] = $this;
-        $layout = $this->getLayout($this->method);
-        $output = View::create($layout)->render($this->response);
-        if (!$this->parent && !$this->getRequest()->isAjax() && ($layout = $this->getLayout())) {
-            $this->response['_CONTENT_'] = $output;
+            $this->response['Me'] = $this;
+            $layout = $this->getLayout($this->method);
             $output = View::create($layout)->render($this->response);
+            if (!$this->parent && !$this->getRequest()->isAjax() && ($layout = $this->getLayout())) {
+                $this->response['_CONTENT_'] = $output;
+                $output = View::create($layout)->render($this->response);
+            }
+            return $output;
+        } catch(Exception $e) {
+            return $e->getMessage();
         }
-        return $output;
     }
 
     public function getName()

@@ -6,6 +6,7 @@ abstract class FormField extends Controller
     protected $label;
     protected $value;
     protected $request;
+    protected $method = false;
 
     public function __construct($name, $label = null, $value = null) {
         $this->name = $name;
@@ -51,7 +52,7 @@ abstract class FormField extends Controller
         return $this;
     }
 
-    public function setForm(Form $form)
+    public function setForm(Controller $form)
     {
         $this->parent = $form;
         return $this;
@@ -59,7 +60,7 @@ abstract class FormField extends Controller
 
     public function getId()
     {
-        return str_replace('/', '_', $this->parent->getAction() . '_' . $this->name);
+        return $this->parent->getName() . '_' . $this->getName();
     }
 
     public function getHtmlType()

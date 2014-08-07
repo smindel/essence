@@ -14,17 +14,4 @@ class TextFormField extends FormField
         $this->rows = (int)$rows;
         return $this;
     }
-
-    public function __toString()
-    {
-        $html = '<div class="field ' . get_class($this) . '"><div class="error">' . $this->getError() . "</div><label for=\"{$this->name}\">{$this->label}</label>";
-        if ($this->getRows() == 1) {
-            $html .= "<input type=\"" . $this->getHtmlType() . "\" id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" value=\"{$this->value}\">";
-        } else {
-            $html .= "<textarea id=\"{$this->name}\" name=\"" . $this->getFullName() . "\" rows=\"" . $this->getRows() . "\">{$this->value}</textarea>";
-        }
-        $html .= '</div>';
-
-        return $html;
-    }
 }

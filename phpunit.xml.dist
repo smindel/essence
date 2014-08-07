@@ -1,11 +1,13 @@
 <phpunit bootstrap="./init.php">
     <testsuite name="Essence Framework">
         <directory>./framework/</directory>
+        <directory>./modules/</directory>
         <exclude>./cache/</exclude>
     </testsuite>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory>./framework/</directory>
+            <directory>./modules/</directory>
             <exclude>
                 <directory>./cache</directory>
             </exclude>

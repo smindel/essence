@@ -23,7 +23,9 @@
             </datalist>
             <a id="{{{$Me->getFullName()}}}_link"
                 {{ if ($Me->getParent()->getObject()->id): }}
-                    href="{{{$Me->relationLink($Me->getObject()->id)}}}"
+                    href="{{{$Me->relationLink(
+                        $Me->getObject() ? $Me->getObject()->id : null
+                    )}}}"
                 {{ endif; }}
             >edit</a>
         </div>

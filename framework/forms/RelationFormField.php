@@ -75,6 +75,11 @@ class RelationFormField extends FormField
         return $this->currentLink() . 'fields/' . $this->name . '/edit/' . $id;
     }
 
+    public function index_action()
+    {
+        return 'sarah';
+    }
+
     public function getForm($id)
     {
         if (($remoteoptions = $this->parent->getObject()->{$this->name}()) && isset($remoteoptions[$id])) {
