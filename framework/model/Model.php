@@ -60,8 +60,8 @@ class Model extends Base
             case 'DATE': return 'DateFormField';
             case 'DATETIME': return 'DatetimeFormField';
             case 'BOOL': return 'CheckboxFormField';
-            case 'FOREIGN': return 'HasOneFormField';
-            case 'LOOKUP': return 'HasManyFormField';
+            case 'FOREIGN': return 'HasOneFormField:add|join';
+            case 'LOOKUP': return 'HasManyFormField:add|join';
             default: return 'TextFormField';
         }
     }
