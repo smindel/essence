@@ -185,6 +185,19 @@ class FormTest extends PHPUnit_Framework_TestCase
         $response = $controller->handleRequest($request);
 
         $this->assertEquals('Yoko', FormTest_ModelChild::one($child->id)->Name, 'Nested Form can handle submission');
+
+        $controllerclass = 'FormTest_Controller';
+        $methodname = 'edit';
+
+        $data = array(
+            'IgnoreSecurityToken' => true,
+            'ChildrenForm' => array('Name' => 'Yoko', 'Daddy' => $parent->id, 'form_delete' => 'delete')
+        );
+        $request = Request::create(implode('/', array($controllerclass, $methodname, $parent->id, 'fields', 'Children', $methodname, $child->id)), $data);
+        $controller = Base::create($request->consume());
+        $response = $controller->handleRequest($request);
+
+        $this->assertNull(FormTest_ModelChild::one($child->id)->Name, 'Nested Form can delete record');
     }
 }
 
