@@ -197,7 +197,7 @@ class FormTest extends PHPUnit_Framework_TestCase
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
-        $this->assertNull(FormTest_ModelChild::one($child->id)->Name, 'Nested Form can delete record');
+        $this->assertNull(FormTest_ModelChild::one($child->id), 'Nested Form can delete record');
     }
 }
 
