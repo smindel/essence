@@ -18,7 +18,7 @@
             </div>
         {{ endif; }}
     {{ endif; }}
-    {{ foreach ($Me->getObject() as $option): }}
+    {{ foreach ($Me->getOptions() as $option): }}
         <div class="option">
             <a{{ if ($Me->getParent()->getObject()->id): }} href="{{{$Me->relationLink($option->id)}}}"{{ endif; }}>{{{$option->title()}}}</a>
         </div>

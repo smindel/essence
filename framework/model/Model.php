@@ -90,11 +90,17 @@ class Model extends Base
         ));
         foreach ($this->getProperties('field') as $key => $fieldclass) {
             if (!$fieldclass) continue;
-            $fields[$key] = $fieldclass::create(
-                $key,
-                $this->getProperty($key, 'label'),
-                $this->getProperty($key, 'value')
-            );
+            switch (true) {
+                case is_a($fieldclass, 'HasOneFormField', true):
+                    if (!$this->$key()->count()) aDebug(get_class($this), $key);
+                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'), $this->$key(), $this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'oninvalid'));
+                    break;
+                case is_a($fieldclass, 'HasManyFormField', true):
+                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'));
+                    break;
+                default:
+                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'));
+            }
         }
         if ($this->id) {
             if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'ändern');

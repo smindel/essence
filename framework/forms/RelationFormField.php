@@ -6,51 +6,22 @@
 class RelationFormField extends FormField
 {
     // ATTENTION: this is not the object of the parent form but the child form
-    protected $object;
-
-    public function getObject()
-    {
-        if ($this->object) return $this->object;
-        $name = $this->name;
-        return $this->parent->getObject()->$name;
-    }
+    protected $options;
+    protected $class;
 
     public function getOptions()
     {
-        $name = $this->name;
-        return $this->parent->getObject()->$name();
-    }
-
-    public function getRemainingOptions()
-    {
-        $name = $this->name;
-        $remaining = array();
-        $parentobject = $this->getParent()->getObject();
-        $remotejoinfield = $parentobject->getProperty($name, 'remotefield');
-        foreach ($this->getOptions() as $id => $option) {
-            if (!$option->$remotejoinfield || $option->$remotejoinfield->id != $parentobject->id) $remaining[$option->id] = $option;
-        }
-        return Collection::create($remaining);
+        return $this->options;
     }
 
     public function getClass()
     {
-        return $this->getParent()->getObject()->getProperty($this->name, 'remoteclass');
-    }
-
-    public function canSetNull()
-    {
-        return $this->getParent()->getObject()->getProperty($this->name, 'oninvalid') == 'SET NULL';
+        return $this->class;
     }
 
     public function relationLink($id = false)
     {
         return $this->currentLink() . 'fields/' . $this->name . '/edit/' . $id;
-    }
-
-    public function index_action()
-    {
-        return 'sarah';
     }
 
     public function getForm($id)
@@ -72,6 +43,8 @@ class RelationFormField extends FormField
             }
         }
 
+        $fields = $this->object->getFields();
+
         $breadcrumbs = array();
         $curr = $this;
         while ($curr) {
@@ -79,8 +52,8 @@ class RelationFormField extends FormField
             $curr = $curr->getParent();
         }
 
-        $fields = $this->object->getFields();
         $fields->insertBefore('Header', 'BreadCrumbs', HtmlFormField::create('BreadCrumbs', null, implode(' > ', $breadcrumbs)));
+
         return Form::create($this->name . 'Form', $fields, $this);
     }
 

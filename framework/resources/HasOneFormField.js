@@ -1,7 +1,5 @@
 window.onload = function() {
 
-    var fields = document.getElementsByClassName('HasOneFormFieldOptions');
-
     var onafterselect = function(event) {
         var target = event.target;
         var value = target.value;
@@ -24,7 +22,10 @@ window.onload = function() {
         target.setAttribute('placeholder', label);
         target.value = '';
         editlink.setAttribute('href', editurl);
+        editlink.textContent = editurl ? 'edit' : '';
     }
+
+    var fields = document.getElementsByClassName('HasOneFormFieldOptions');
 
     for(var i = 0; i < fields.length; i++) {
         fields[i].addEventListener('select', onafterselect, false);
