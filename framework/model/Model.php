@@ -9,36 +9,53 @@ class Model extends Base
             'label' => 'ID',
             'value' => null
         ),
+        'Name' => array(
+            'type' => 'TEXT',
+            'size' => 32,
+            'field' => 'TextFormField',
+            'label' => 'Name',
+            'value' => null
+        ),
         'parent' => array(
-            'type' => 'FOREIGN:RemoteClassName:|RESTRICT|CASCADE(|SET NULL)',
-            'field' => 'HasOneFormField:add|join',
+            'type' => 'FOREIGN',
+            'remoteclass' => 'someclass',
+            'oninvalid' => 'SET NULL*|RESTRICT|CASCADE',
+            'field' => 'HasOneFormField',
             'label' => 'Parent',
             'value' => null
         ),
         'children' => array(
-            'type' => 'LOOKUP:RemoteClassName:RemoteJoinField',
-            'field' => 'HasManyFormField:add|join',
+            'type' => 'LOOKUP',
+            'remoteclass' => 'RemoteClassName',
+            'remotefield' => 'RemoteJoinField',
+            'field' => 'HasManyFormField',
             'label' => 'Children',
         ),
     );
 
-    public function getProperty($property, $key = 'type')
+    public function getProperty($property, $key = null)
     {
         if (!isset($this->db[$property])) return false;
+        if (!$key) return $this->db[$property];
         if (isset($this->db[$property][$key])) return $this->db[$property][$key];
         switch ($key) {
-            case 'type': return 'DEFAULT';
+            case 'type': throw new Exception('Type must be defined');
+            case 'remoteclass': return null;
+            case 'remotefield': return null;
+            case 'oninvalid': return 'SET NULL';
             case 'label': return $property;
             case 'field': return $this->getDefaultFormFieldClass($property);
             case 'value': return null;
+            case 'size': return null;
         }
     }
 
-    public function getProperties($values = 'type')
+    public function getProperties($key = null)
     {
+        if (!$key) return $this->db;
         $properties = array();
         foreach ($this->db as $prop => $spec) {
-            $properties[$prop] = $this->getProperty($prop, $values);
+            $properties[$prop] = $this->getProperty($prop, $key);
         }
         return $properties;
     }
@@ -54,14 +71,13 @@ class Model extends Base
     public function getDefaultFormFieldClass($propertyname)
     {
         if (isset($this->db[$propertyname]['field'])) return $this->db[$propertyname]['field'];
-        list($type) = explode(':', $this->getProperty($propertyname));
-        switch ($type) {
+        switch ($this->getProperty($propertyname, 'type')) {
             case 'ID': return 'HiddenFormField';
             case 'DATE': return 'DateFormField';
             case 'DATETIME': return 'DatetimeFormField';
             case 'BOOL': return 'CheckboxFormField';
-            case 'FOREIGN': return 'HasOneFormField:add|join';
-            case 'LOOKUP': return 'HasManyFormField:add|join';
+            case 'FOREIGN': return 'HasOneFormField';
+            case 'LOOKUP': return 'HasManyFormField';
             default: return 'TextFormField';
         }
     }
@@ -72,9 +88,8 @@ class Model extends Base
             'Header' => HtmlFormField::create('Header', null, "<h1>{$this->title()}</h1>"),
             'SecurityID' => SecurityTokenFormField::create('SecurityID'),
         ));
-        foreach ($this->getProperties('field') as $key => $fieldtype) {
-            if (!$fieldtype) continue;
-            list($fieldclass) = explode(':', $fieldtype);
+        foreach ($this->getProperties('field') as $key => $fieldclass) {
+            if (!$fieldclass) continue;
             $fields[$key] = $fieldclass::create(
                 $key,
                 $this->getProperty($key, 'label'),
@@ -142,13 +157,10 @@ class Model extends Base
         if (method_exists($this, ($method = 'get' . $key))) {
             return $this->$method();
         } else if (isset($this->db[$key])) {
-            list($metatype, $class, $param) = explode(':', $this->getProperty($key) . ':SET NULL:');
-            if ($metatype == 'FOREIGN') {
-                return isset($this->db[$key]['value']) ? $class::one($this->db[$key]['value']) : null;
-            } else if ($metatype == 'LOOKUP') {
-                return isset($this->db['id']['value']) ? $class::get($param, $this->db['id']['value']) : Collection::create();
-            } else {
-                return isset($this->db[$key]['value']) ? $this->db[$key]['value'] : null;
+            switch ($this->getProperty($key, 'type')) {
+                case 'FOREIGN': return isset($this->db[$key]['value']) ? Model::one($this->getProperty($key, 'remoteclass'), $this->db[$key]['value']) : null;
+                case 'LOOKUP': return isset($this->db['id']['value']) ? Model::get($this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'remotefield'), $this->db['id']['value']) : Collection::create();
+                default: return isset($this->db[$key]['value']) ? $this->db[$key]['value'] : null;
             }
         } else {
             throw new Exception("Undefined property '" . get_class($this) . "->$key'");
@@ -162,21 +174,22 @@ class Model extends Base
         } else if ($key == 'id') {
             throw new Exception("Cannot set property '" . get_class($this) . "->$key'");
         } else if (isset($this->db[$key])) {
-            list($metatype, $class, $param) = explode(':', $this->getProperty($key) . ':SET NULL:');
-            if ($metatype == 'FOREIGN') {
-                if ($val instanceof $class) {
-                    if ($val->id) {
-                        $this->db[$key]['value'] = $val->id;
+            switch ($this->getProperty($key, 'type')) {
+                case 'FOREIGN':
+                    if (is_a($val, $this->getProperty($key, 'remoteclass'), true)) {
+                        if ($val->id) {
+                            $this->db[$key]['value'] = $val->id;
+                        } else {
+                            throw new Exception("Related Object has to be saved first: '" . get_class($this) . "->$key'");
+                        }
                     } else {
-                        throw new Exception("Related Object has to be saved first: '" . get_class($this) . "->$key'");
+                        throw new Exception("You cannot set value on has many relation '" . get_class($this) . "->$key'");
                     }
-                } else {
+                    break;
+                case 'LOOKUP':
                     throw new Exception("You cannot set value on has many relation '" . get_class($this) . "->$key'");
-                }
-            } else if ($metatype == 'LOOKUP') {
-                throw new Exception("You cannot set value on has many relation '" . get_class($this) . "->$key'");
-            } else {
-                $this->db[$key]['value'] = $val;
+                default:
+                    $this->db[$key]['value'] = $val;
             }
         } else {
             throw new Exception("Undefined property '" . get_class($this) . "->$key'");
@@ -186,12 +199,9 @@ class Model extends Base
     public function __call($key, $args)
     {
         if (isset($this->db[$key])) {
-            list($metatype, $class, $param) = explode(':', $this->getProperty($key) . ':SET NULL');
-            if ($metatype == 'FOREIGN') {
-                $options = $class::get();
-                return $options;
-            } else if ($metatype == 'LOOKUP') {
-                return $class::get();
+            switch ($this->getProperty($key, 'type')) {
+                case 'FOREIGN':
+                case 'LOOKUP': return Model::get($this->getProperty($key, 'remoteclass'));
             }
         } else {
             return call_user_func_array('parent::__call', func_get_args());
@@ -201,8 +211,7 @@ class Model extends Base
     public function hydrate($record)
     {
         foreach ($record as $key => $val) {
-            list($type) = explode(':', $this->getProperty($key) ?: '');
-            if (!$type) continue;
+            if(!($type = $this->getProperty($key, 'type'))) continue;
             if ($type == 'FOREIGN' && !$val) $val = null;
             $this->db[$key]['value'] = $val;
         }
@@ -217,7 +226,7 @@ class Model extends Base
 
         $values = array();
         foreach ($this->db as $key => $options) {
-            if (!isset($options['value']) || isset($options['type']) && Database::spec($options['type']) === false) continue;
+            if (!array_key_exists('value', $options) || isset($options['type']) && Database::spec($options) === false) continue;
             $values[$key] = $options['value'];
         }
 

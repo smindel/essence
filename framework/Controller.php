@@ -25,7 +25,7 @@ abstract class Controller extends Base
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $this->response = $this->handleAction($this->method) ?: array();
+        $this->response = $this->handleAction($this->method ?: 'index') ?: array();
 
         if (method_exists($this, 'beforeRender')) $this->beforeRender();
 

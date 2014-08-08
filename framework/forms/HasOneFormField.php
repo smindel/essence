@@ -4,7 +4,7 @@ class HasOneFormField extends RelationFormField
 {
     public function validate($value)
     {
-        list(,,$constrain) = explode(':', $this->parent->getObject()->getProperty($this->name) . '::');
+        $constrain = $this->parent->getObject()->getProperty($this->name, 'oninvalid');
         if ($constrain == 'CASCADE' || $constrain == 'RESTRICT') {
             if ((int)$value < 1) return false;
         }

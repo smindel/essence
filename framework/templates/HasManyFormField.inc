@@ -2,14 +2,14 @@
     <div class="error">{{{$Me->getError()}}}</div>
     <label for="{{{$Me->getName()}}}">{{{$Me->getLabel()}}}</label>
     {{ if ($Me->getParent()->getObject()->id): }}
-        {{ if ($Me->canCreate()): }}
+        {{ if ($Me->getClass()): }}
             <div class="option">
-                <a class="button" href="{{{$Me->relationLink()}}}">{{{$Me->canCreate()}}} erstellen</a>
+                <a class="button" href="{{{$Me->relationLink()}}}">{{{$Me->getClass()}}} erstellen</a>
             </div>
         {{ endif; }}
-        {{ if ($Me->canJoin()): }}
+        {{ if ($Me->getClass()): }}
             <div class="option">
-                <input placeholder="{{{$Me->canJoin()}}} zuordnen" list="{{{$Me->getParent()->getName()}}}[{{{$Me->getName()}}}_Options]" onselect="document.location.href = '{{{$Me->relationLink()}}}' + this.value;">
+                <input type="search" placeholder="{{{$Me->getClass()}}} zuordnen" list="{{{$Me->getParent()->getName()}}}[{{{$Me->getName()}}}_Options]" onselect="document.location.href = '{{{$Me->relationLink()}}}' + this.value;">
                 <datalist id="{{{$Me->getParent()->getName()}}}[{{{$Me->getName()}}}_Options]">
                     {{ foreach ($Me->getRemainingOptions() as $option): }}
                         <option value="{{{$option->id}}}">{{{$option->title()}}}</option>

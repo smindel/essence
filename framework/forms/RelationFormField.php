@@ -1,5 +1,8 @@
 <?php
 
+// RelationFormField von Model abkoppeln
+// HasOneFormField in ModelFormField und HasManyFormField in CollectionFormField umbenennen
+
 class RelationFormField extends FormField
 {
     // ATTENTION: this is not the object of the parent form but the child form
@@ -23,51 +26,21 @@ class RelationFormField extends FormField
         $name = $this->name;
         $remaining = array();
         $parentobject = $this->getParent()->getObject();
-        list(,,$remotejoinfield) = explode(':', $parentobject->getProperty($name));
+        $remotejoinfield = $parentobject->getProperty($name, 'remotefield');
         foreach ($this->getOptions() as $id => $option) {
             if (!$option->$remotejoinfield || $option->$remotejoinfield->id != $parentobject->id) $remaining[$option->id] = $option;
         }
         return Collection::create($remaining);
     }
 
-    public function canCreate()
+    public function getClass()
     {
-        $name = $this->name;
-        $parentobject = $this->getParent()->getObject();
-        if (($field = $parentobject->getProperty($name, 'field'))) {
-            list(, $action) = explode(':', $field . ':');
-            $actions = explode('|', $action);
-            list($metatype, $class, $option) = explode(':', $parentobject->getProperty($this->name) . ':SET NULL');
-            if ($metatype == 'LOOKUP' && in_array('add', $actions)) {
-                return $class;
-            } else if ($metatype == 'FOREIGN' && in_array('add', $actions) && $option == 'SET NULL' || !$parentobject->$name) {
-                return $class;
-            }
-        }
-        return false;
-    }
-
-    public function canJoin()
-    {
-        $name = $this->name;
-        $parentobject = $this->getParent()->getObject();
-        if (($field = $parentobject->getProperty($name, 'field'))) {
-            list(, $action) = explode(':', $field . ':');
-            $actions = explode('|', $action);
-            list($metatype, $class, $option) = explode(':', $parentobject->getProperty($this->name) . ':SET NULL');
-            if ($metatype == 'LOOKUP' && in_array('join', $actions)) {
-                return $class;
-            } else if ($metatype == 'FOREIGN' && in_array('join', $actions)) {
-                return $class;
-            }
-        }
-        return false;
+        return $this->getParent()->getObject()->getProperty($this->name, 'remoteclass');
     }
 
     public function canSetNull()
     {
-        list($metatype, $class, $option) = explode(':', $this->getParent()->getObject()->getProperty($this->name) . ':SET NULL');
-        return $metatype == 'FOREIGN' && $option == 'SET NULL' ? $class : false;
+        return $this->getParent()->getObject()->getProperty($this->name, 'oninvalid') == 'SET NULL';
     }
 
     public function relationLink($id = false)
@@ -85,12 +58,17 @@ class RelationFormField extends FormField
         if (($remoteoptions = $this->parent->getObject()->{$this->name}()) && isset($remoteoptions[$id])) {
             $this->object = $remoteoptions[$id];
         } else {
-            list($type, $remoteclass, $remotefield) = explode(':', $this->parent->getObject()->getProperty($this->name) . ':SET NULL');
-            if ($type == 'LOOKUP') {
-                $this->object = $remoteclass::create();
-                $this->object->$remotefield = $this->parent->getObject();
-            } else if ($type == 'FOREIGN') {
-                $this->object = $remoteclass::create();
+            switch ($this->parent->getObject()->getProperty($this->name, 'type')) {
+                case 'LOOKUP':
+                    $this->object = Base::create($this->parent->getObject()->getProperty($this->name, 'remoteclass'));
+                    $remotefield = $this->parent->getObject()->getProperty($this->name, 'remotefield');
+                    $this->object->$remotefield = $this->parent->getObject();
+                    break;
+                case 'FOREIGN':
+                    $this->object = Base::create($this->parent->getObject()->getProperty($this->name, 'remoteclass'));
+                    break;
+                default:
+                    throw new Exception(get_class($this) . ' can only be used on relations.');
             }
         }
 

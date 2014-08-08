@@ -3,10 +3,10 @@
 class User extends Model
 {
     protected $db = array(
-        'id' => array('type' => 'ID', 'field' => 'HiddenFormField'),
-        'Name' => array(),
-        'Email' => array('field' => 'EmailFormField'),
-        'Password' => array('field' => 'PasswordFormField', 'label' => 'Passwort'),
+        'id' => array('type' => 'ID'),
+        'Name' => array('type' => 'TEXT'),
+        'Email' => array('type' => 'TEXT', 'field' => 'EmailFormField'),
+        'Password' => array('type' => 'TEXT', 'field' => 'PasswordFormField', 'label' => 'Passwort'),
     );
 
     public function title()

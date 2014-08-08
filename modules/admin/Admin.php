@@ -77,7 +77,6 @@ class Admin extends Controller
 
     public function form_save(Form $form)
     {
-        // aDebug($form->getData());die();
         $this->object->hydrate($form->getData())->write();
         if ($this->request->getRaw($form->getName(), '_show_parent')) {
             $redirect = $this->link('list', get_class($this->object));

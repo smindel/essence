@@ -19,23 +19,31 @@ class Database
     public static function create_table($table, $specs)
     {
         $def = array();
-        foreach ($specs as $key => $val) {
-            $val = self::spec($val);
-            if ($val === false) continue;
-            $def[] = $val == 'DEFAULT' ? "\"{$key}\"" : "\"{$key}\" $val";
+        foreach ($specs as $col => $spec) {
+            $spec = self::spec($spec);
+            if ($spec === false) continue;
+            $def[] = "\"{$col}\" $spec";
         }
         Database::conn()->query("CREATE TABLE IF NOT EXISTS \"{$table}\" (" . implode(', ', $def) . ")");
     }
 
+    public static function add_column($table, $col, $spec)
+    {
+        $spec = self::spec($spec);
+        if ($spec === false) continue;
+        aDebug(func_get_args());
+        Database::query("ALTER TABLE \"{$table}\" ADD COLUMN \"{$col}\" {$spec}");
+    }
+
     public static function spec($in)
     {
-        list($metatype, $param1, $param2) = explode(':', $in . '::');
-        switch ($metatype) {
+        switch ($in['type']) {
             case 'ID': return 'INTEGER PRIMARY KEY AUTOINCREMENT';
+            case 'TEXT': return 'VARCHAR(' . (empty($in['size']) ? 255 : $in['size']) . ')';
             case 'DATE': return 'DATE';
             case 'DATETIME': return 'DATETIME';
             case 'BOOL': return 'BOOLEAN';
-            case 'FOREIGN': return "INTEGER REFERENCES {$param1}(id) ON DELETE " . ($param2 ?: 'SET NULL');
+            case 'FOREIGN': return "INTEGER REFERENCES {$in['remoteclass']}(id) ON DELETE " . (empty($in['oninvalid']) ? 'SET NULL' : $in['oninvalid']);
             case 'LOOKUP': return false;
         }
     }

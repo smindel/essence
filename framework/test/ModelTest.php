@@ -90,8 +90,8 @@ class ModelTest_Model extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array(),
-        'Children' => array('type' => 'LOOKUP:ModelTest_ModelChild:Daddy'),
+        'Name' => array('type' => 'TEXT'),
+        'Children' => array('type' => 'LOOKUP', 'remoteclass' => 'ModelTest_ModelChild', 'remotefield' => 'Daddy'),
     );
 }
 
@@ -99,7 +99,7 @@ class ModelTest_ModelChild extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array(),
-        'Daddy' => array('type' => 'FOREIGN:ModelTest_Model:RESTRICT'),
+        'Name' => array('type' => 'TEXT'),
+        'Daddy' => array('type' => 'FOREIGN', 'remoteclass' => 'ModelTest_Model', 'oninvalid' => 'RESTRICT'),
     );
 }

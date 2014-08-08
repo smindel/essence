@@ -42,7 +42,7 @@ class Form extends Controller
         $submitteddata = $this->request->getRaw($this->name) ?: array();
         $error = $callback = false;
         foreach ($this->fields as $field) {
-            $submittedvalue = isset($submitteddata[$field->getName()]) ? $submitteddata[$field->getName()] : null;
+            $submittedvalue = array_key_exists($field->getName(), $submitteddata) ? $submitteddata[$field->getName()] : null;
             if ($field instanceof SubmitFormField && isset($submittedvalue)) {
                 $callback = array($this->parent, $field->getName());
             }
@@ -50,7 +50,7 @@ class Form extends Controller
 
         // if this is a submission validate and set data on fields
         if ($callback) foreach ($this->fields as $field) {
-            $submittedvalue = isset($submitteddata[$field->getName()]) ? $submitteddata[$field->getName()] : null;
+            $submittedvalue = array_key_exists($field->getName(), $submitteddata) ? $submitteddata[$field->getName()] : null;
             if (!$field->validate($submittedvalue)) {
                 $field->setError('Validation failed');
                 $error = true;

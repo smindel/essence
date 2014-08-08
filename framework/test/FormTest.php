@@ -251,8 +251,8 @@ class FormTest_Model extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array(),
-        'Children' => array('type' => 'LOOKUP:FormTest_ModelChild:Daddy'),
+        'Name' => array('type' => 'TEXT'),
+        'Children' => array('type' => 'LOOKUP', 'remoteclass' => 'FormTest_ModelChild', 'remotefield' => 'Daddy'),
     );
 
     public function getFields()
@@ -267,8 +267,8 @@ class FormTest_ModelChild extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array(),
-        'Daddy' => array('type' => 'FOREIGN:FormTest_Model:RESTRICT'),
+        'Name' => array('type' => 'TEXT'),
+        'Daddy' => array('type' => 'FOREIGN', 'remoteclass' => 'FormTest_Model', 'oninvalid' => 'RESTRICT'),
     );
 
     public function getFields()
