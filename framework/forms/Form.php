@@ -5,6 +5,8 @@ class Form extends Controller
     protected $name;
     protected $fields;
     protected $action;
+    protected $messageText;
+    protected $messageType;
 
     // alle formfield::tostring methods muessen gegen index_actions ersetzt werden,
     // entsprechende formfield.index.inc templates muessen erstellt werden
@@ -49,22 +51,33 @@ class Form extends Controller
         }
 
         // if this is a submission validate and set data on fields
-        if ($callback) foreach ($this->fields as $field) {
-            $submittedvalue = array_key_exists($field->getName(), $submitteddata) ? $submitteddata[$field->getName()] : null;
-            if (!$field->validate($submittedvalue)) {
-                $field->setError('Validation failed');
-                $error = true;
+        if ($callback) {
+            foreach ($this->fields as $field) {
+                $submittedvalue = array_key_exists($field->getName(), $submitteddata) ? $submitteddata[$field->getName()] : null;
+                $error = $field->validate($submittedvalue) ? $error : true;
+                $field->setValue($submittedvalue);
             }
-            $field->setValue($submittedvalue);
+            if ($error) {
+                $this->setMessage('An error occurred', 'error');
+            } else {
+                return call_user_func($callback, $this);
+            }
         }
 
-        if ($error) {
-            return $this->redirectBack();
-        } else if ($callback) {
-            return call_user_func($callback, $this);
-        } else {
-            return array();
-        }
+        return array();
+    }
+
+    public function setMessage($msg, $type = 'info')
+    {
+        $this->messageText = $msg;
+        $this->messageType = $type;
+        return $this;
+    }
+
+    public function getMessage()
+    {
+        if (empty($this->messageText)) return false;
+        return array('text' => $this->messageText, 'type' => $this->messageType);
     }
 
     public function fields_action($field)

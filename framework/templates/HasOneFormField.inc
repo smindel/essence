@@ -1,6 +1,6 @@
 {{ Resources::add("framework/resources/HasOneFormField.js"); }}
 <div class="field {{{get_class($Me)}}}">
-    <div class="error">{{{$Me->getError()}}}</div>
+    <div class="message error">{{{$Me->getError()}}}</div>
     <label for="{{{$Me->getName()}}}">{{{$Me->getLabel()}}}</label>
     {{ if ($Me->getClass()): }}
         <div class="option">

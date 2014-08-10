@@ -19,8 +19,9 @@ class HasOneFormField extends RelationFormField
 
     public function validate($value)
     {
-        if ($this->oninvalid == 'CASCADE' || $this->oninvalid == 'RESTRICT') {
-            if ((int)$value < 1) return false;
+        if (($this->oninvalid == 'CASCADE' || $this->oninvalid == 'RESTRICT') && (int)$value < 1) {
+            $this->setError('Please choose a value for this field.');
+            return false;
         }
         return parent::validate($value);
     }

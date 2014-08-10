@@ -10,6 +10,7 @@ abstract class FormField extends Controller
     protected $validator;
     protected $required = false;
     protected $check = false;
+    protected $errormsg = false;
 
     public function __construct($name, $label = null, $value = null) {
         $this->name = $name;
@@ -98,8 +99,14 @@ abstract class FormField extends Controller
     public function validate($value)
     {
         if ($this->validator) return call_user_func($this->validator, $value, $this, $form);
-        if (!empty($value) && !empty($this->check) && !preg_match($this->check, $value)) return false;
-        if (empty($value) && $this->required) return false;
+        if (!empty($value) && !empty($this->check) && !preg_match($this->check, $value)) {
+            $this->setError('This value is not alloed.');
+            return false;
+        }
+        if (empty($value) && $this->required) {
+            $this->setError('Please fill in this field.');
+            return false;
+        }
         return true;
     }
 
@@ -111,16 +118,12 @@ abstract class FormField extends Controller
 
     public function setError($msg)
     {
-        $_SESSION[$this->getId() . '_error'] = $msg;
+        $this->errormsg = $msg;
+        return $this;
     }
 
     public function getError($keep = false)
     {
-        $msg = false;
-        if (isset($_SESSION[$this->getId() . '_error'])) {
-            $msg = $_SESSION[$this->getId() . '_error'];
-            if (!$keep) unset($_SESSION[$this->getId() . '_error']);
-        }
-        return $msg;
+        return $this->errormsg;
     }
 }

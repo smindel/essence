@@ -1,1 +1,5 @@
-<div class="field {{{get_class($Me)}}}"><div class="error">{{{$Me->getError()}}}</div><label for="{{{$Me->getName()}}}">{{{$Me->getLabel()}}}</label><input type="{{{$Me->getHtmlType()}}}" id="{{{$Me->getName()}}}" name="{{{$Me->getFullName()}}}" value="{{{$Me->getValue()}}}" data-fyi-url="{{{$Me->currentLink()}}}"></div>
+<div class="field {{{get_class($Me)}}}">
+    <div class="message error">{{{$Me->getError()}}}</div>
+    <label for="{{{$Me->getName()}}}">{{{$Me->getLabel()}}}</label>
+    <input type="{{{$Me->getHtmlType()}}}" id="{{{$Me->getName()}}}" name="{{{$Me->getFullName()}}}" value="{{{$Me->getValue()}}}" data-fyi-url="{{{$Me->currentLink()}}}">
+</div>
