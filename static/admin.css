@@ -24,7 +24,9 @@ button, input, select, textarea {
   font-size   : 100%;
 }
 label { display:inline; font-weight:bold; }
+
 select, button, input, textarea { display:block; border:1px solid #aaa; border-radius:5px; padding:3px 10px; color:rgb(65, 139, 202);}
+input::-moz-placeholder, textarea::-moz-placeholder { color:rgb(65, 139, 202); opacity: 1; }
 input[type="radio"], input[type="checkbox"] { display:inline; }
 input[type="submit"], input[type="button"] {
     color: #000000;

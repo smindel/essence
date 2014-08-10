@@ -3,4 +3,3 @@
         <li class="{{{$link['class']}}}"><a href="{{{$link['link']}}}">{{{$link['title']}}}</a></li>
     {{endforeach;}}
 </ul>
-</ul>

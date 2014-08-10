@@ -41,7 +41,7 @@ class Authentication extends Controller
     {
         $data = $form->getData();
         $user = User::one('Name', $data['Name']);
-        $valid = $data['Password'] == $user->Password;
+        $valid = $user && $data['Password'] == $user->Password;
         $fields = $form->getFields();
 
         if ($user && $valid) {

@@ -40,13 +40,10 @@ class Model extends Base
         if (isset($this->db[$property][$key])) return $this->db[$property][$key];
         switch ($key) {
             case 'type': throw new Exception('Type must be defined');
-            case 'remoteclass': return null;
-            case 'remotefield': return null;
             case 'oninvalid': return 'SET NULL';
             case 'label': return $property;
             case 'field': return $this->getDefaultFormFieldClass($property);
-            case 'value': return null;
-            case 'size': return null;
+            default: return null;
         }
     }
 
@@ -73,6 +70,8 @@ class Model extends Base
         if (isset($this->db[$propertyname]['field'])) return $this->db[$propertyname]['field'];
         switch ($this->getProperty($propertyname, 'type')) {
             case 'ID': return 'HiddenFormField';
+            case 'INT': return 'NumberFormField';
+            case 'FLOAT': return 'NumberFormField';
             case 'DATE': return 'DateFormField';
             case 'DATETIME': return 'DatetimeFormField';
             case 'BOOL': return 'CheckboxFormField';
@@ -92,14 +91,17 @@ class Model extends Base
             if (!$fieldclass) continue;
             switch (true) {
                 case is_a($fieldclass, 'HasOneFormField', true):
-                    if (!$this->$key()->count()) aDebug(get_class($this), $key);
                     $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'), $this->$key(), $this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'oninvalid'));
                     break;
                 case is_a($fieldclass, 'HasManyFormField', true):
-                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'));
+                    if ($this->id) $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'));
                     break;
                 default:
                     $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'));
+            }
+            if (isset($fields[$key])) {
+                $fields[$key]->setRequired($this->getProperty($key, 'required'));
+                $fields[$key]->setCheck($this->getProperty($key, 'check'));
             }
         }
         if ($this->id) {
@@ -129,6 +131,7 @@ class Model extends Base
     public function title()
     {
         if (isset($this->db['Name'])) return $this->Name;
+        if (isset($this->db['name'])) return $this->name;
         return get_class($this) . " ({$this->id})";
     }
 
@@ -186,6 +189,7 @@ class Model extends Base
                         if ($val->id) {
                             $this->db[$key]['value'] = $val->id;
                         } else {
+                            aDebug($this, $val);
                             throw new Exception("Related Object has to be saved first: '" . get_class($this) . "->$key'");
                         }
                     } else {
@@ -232,6 +236,9 @@ class Model extends Base
 
         $values = array();
         foreach ($this->db as $key => $options) {
+            $required = $this->getProperty($key, 'required');
+            $value = $this->getProperty($key, 'value');
+            if (!empty($required) && empty($value)) throw new Exception("Value " . get_class($this) . "->{$key} is required.");
             if (!array_key_exists('value', $options) || isset($options['type']) && Database::spec($options) === false) continue;
             $values[$key] = $options['value'];
         }

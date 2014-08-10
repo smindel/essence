@@ -7,6 +7,9 @@ abstract class FormField extends Controller
     protected $value;
     protected $request;
     protected $method = false;
+    protected $validator;
+    protected $required = false;
+    protected $check = false;
 
     public function __construct($name, $label = null, $value = null) {
         $this->name = $name;
@@ -80,9 +83,24 @@ abstract class FormField extends Controller
         return in_array($guess, $htmltypes) ? $guess : false;
     }
 
+    public function setRequired($required)
+    {
+        $this->required = $required;
+        return $this;
+    }
+
+    public function setCheck($check)
+    {
+        $this->check = $check;
+        return $this;
+    }
+
     public function validate($value)
     {
-        return isset($this->validator) ? call_user_func($this->validator, $value, $this, $form) : true;
+        if ($this->validator) return call_user_func($this->validator, $value, $this, $form);
+        if (!empty($value) && !empty($this->check) && !preg_match($this->check, $value)) return false;
+        if (empty($value) && $this->required) return false;
+        return true;
     }
 
     public function setValidator($validator)

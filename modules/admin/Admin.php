@@ -40,11 +40,13 @@ class Admin extends Controller
         return $items;
     }
 
-    public function index_action() {
+    public function index_action()
+    {
         $this->redirect($this->link('list', reset(static::$managed_models)));
     }
 
-    public function list_action($model) {
+    public function list_action($model)
+    {
         if (!$model) $this->index_action();
 
         $links = array(array(
@@ -65,7 +67,8 @@ class Admin extends Controller
         );
     }
 
-    public function edit_action($model, $id = null) {
+    public function edit_action($model, $id = null)
+    {
         $this->object = $model::one($id) ?: $model::create();
         $fields = $this->object->getFields();
         $form = Form::create($model . 'Form', $fields, $this);

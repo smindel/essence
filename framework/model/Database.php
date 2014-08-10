@@ -31,18 +31,22 @@ class Database
     {
         $spec = self::spec($spec);
         if ($spec === false) continue;
-        aDebug(func_get_args());
         Database::query("ALTER TABLE \"{$table}\" ADD COLUMN \"{$col}\" {$spec}");
     }
 
     public static function spec($in)
     {
+        $constraint = empty($in['DEFAULT']) ? '' : ' DEFAULT ' . $in['DEFAULT'];
+        $constraint .= empty($in['NOT NULL']) ? '' : ' NOT NULL';
+        $constraint .= empty($in['UNIQUE']) ? '' : ' UNIQUE';
         switch ($in['type']) {
             case 'ID': return 'INTEGER PRIMARY KEY AUTOINCREMENT';
-            case 'TEXT': return 'VARCHAR(' . (empty($in['size']) ? 255 : $in['size']) . ')';
-            case 'DATE': return 'DATE';
-            case 'DATETIME': return 'DATETIME';
-            case 'BOOL': return 'BOOLEAN';
+            case 'TEXT': return 'VARCHAR(' . (empty($in['size']) ? 255 : $in['size']) . ')' . $constraint;
+            case 'INT': return 'INT(' . (empty($in['size']) ? 11 : $in['size']) . ')' . $constraint;
+            case 'FLOAT': return 'FLOAT' . $constraint;
+            case 'DATE': return 'DATE' . $constraint;
+            case 'DATETIME': return 'DATETIME' . $constraint;
+            case 'BOOL': return 'BOOLEAN' . $constraint;
             case 'FOREIGN': return "INTEGER REFERENCES {$in['remoteclass']}(id) ON DELETE " . (empty($in['oninvalid']) ? 'SET NULL' : $in['oninvalid']);
             case 'LOOKUP': return false;
         }

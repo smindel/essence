@@ -12,6 +12,11 @@ class HasManyFormField extends RelationFormField
         $this->selected = $selected;
     }
 
+    public function getSelected()
+    {
+        return $this->selected;
+    }
+
     public function getRemainingOptions()
     {
         $name = $this->name;
