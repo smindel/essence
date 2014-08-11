@@ -30,4 +30,14 @@ class HasOneFormField extends RelationFormField
     {
         return $this->oninvalid == 'SET NULL';
     }
+
+    public function suggest_action($hint = '')
+    {
+        $hint = strtolower(trim(strip_tags($hint)));
+        $suggestions = array();
+        if ($hint) foreach ($this->options as $option) {
+            if (strpos(strtolower($option->title()), $hint) !== false) $suggestions[$option->id] = $option->title();
+        }
+        return array('suggestions' => $suggestions);
+    }
 }

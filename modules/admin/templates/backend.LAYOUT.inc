@@ -10,8 +10,6 @@
 <body data-fyi-url="{{ if (isset($Me)) echo $Me->currentLink(); }}">
     <header>
         <a href="{{{$Me->link()}}}" class="logo">ESSENCE</a>
-        <a href="backend/panel/UserManager/edit/user/{{{Authentication::user()->id}}}">{{{Authentication::user()->Name}}}</a>
-        <a href="authentication/logout">logout</a>
     </header>
     <nav class="left">
         {{{$Me->Menu()}}}
@@ -21,7 +19,8 @@
         {{{ $_CONTENT_ }}}
     </main>
     <footer>
-        &copy; 2014 PIT
+        <a href="backend/panel/UserManager/edit/user/{{{Authentication::user()->id}}}"><span class="awesome"></span> {{{Authentication::user()->Name}}}</a>
+        <a href="authentication/logout"><span class="awesome"></span> logout</a>
     </footer>
     {{{ Resources::js() }}}
 </body>

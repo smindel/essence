@@ -84,7 +84,8 @@ class Model extends Base
     public function getFields()
     {
         $fields = Collection::create(array(
-            'Header' => HtmlFormField::create('Header', null, "<h1>{$this->title()}</h1>"),
+            'Header' => HtmlFormField::create('Header', null, "<h1>{$this->title()}</h1>")->setShowHolder(true),
+            'Line' => HtmlFormField::create('Header', null, "<hr>"),
             'SecurityID' => SecurityTokenFormField::create('SecurityID'),
         ));
         foreach ($this->getProperties('field') as $key => $fieldclass) {

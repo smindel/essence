@@ -1,5 +1,7 @@
-<div class="field {{{get_class($Me)}}}">
-    <div class="message error">{{{$Me->getError()}}}</div>
+<div class="fieldholder {{{get_class($Me)}}}">
     <label for="{{{$Me->getName()}}}">{{{$Me->getLabel()}}}</label>
-    <input type="{{{$Me->getHtmlType()}}}" id="{{{$Me->getName()}}}" name="{{{$Me->getFullName()}}}" value="{{{$Me->getValue()}}}" data-fyi-url="{{{$Me->currentLink()}}}">
+    <div class="field">
+        <input type="{{{$Me->getHtmlType()}}}" id="{{{$Me->getName()}}}" name="{{{$Me->getFullName()}}}" value="{{{$Me->getValue()}}}" data-fyi-url="{{{$Me->currentLink()}}}">
+        <div class="message error">{{{$Me->getError()}}}</div>
+    </div>
 </div>

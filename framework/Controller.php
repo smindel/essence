@@ -76,6 +76,7 @@ abstract class Controller extends Base
 
             $this->response['Me'] = $this;
             $layout = $this->getLayout($this->method);
+            if (!$layout) throw new Exception("No template found for '" . get_class($this) . "->{$this->method}'");
             $output = View::create($layout)->render($this->response);
             if (!$this->parent && !$this->getRequest()->isAjax() && ($layout = $this->getLayout())) {
                 $this->response['_CONTENT_'] = $output;

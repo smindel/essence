@@ -1,0 +1,24 @@
+.autocomplete {
+    position:relative;
+}
+.autocomplete-suggestions {
+    position:absolute;
+    border:1px solid #aaa;
+    border-top:0px none;
+    box-shadow: 2px 2px 3px rgba(000,000,000,0.1);
+    background:white;
+}
+.autocomplete-suggestions.empty {
+    display:none;
+}
+.autocomplete-suggestions > * {
+    padding:3px 10px;
+    color:#5D6A79;
+}
+.autocomplete-suggestions .autocomplete-option {
+    cursor:pointer;
+}
+.autocomplete-suggestions .autocomplete-option.highlight {
+    background:red;
+    color:white;
+}

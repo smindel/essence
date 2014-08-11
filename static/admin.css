@@ -1,43 +1,37 @@
 body { font-family:Helvetica; font-size:12px; }
-a { color:white; }
 ul { margin:0 0 1em;padding:0 2em 0; }
 ul li {margin:0 0 .5em 1em;}
-
-.light {
-    background-color: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 .widget {
     padding:10px;
     margin:10px;
-    border-radius:10px;
-    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.05);
-}
-
-.noise {
-    background: url("dot_pattern.png") repeat scroll 0 0 rgba(0, 0, 0, 0.3);
 }
 
 button, input, select, textarea {
   font-family : inherit;
   font-size   : 100%;
 }
-label { display:inline; font-weight:bold; }
+label { display:table-cell;  padding:1em 0; padding-right:.75em; width:200px; text-align:right; font-weight:bold; }
 
-select, button, input, textarea { display:block; border:1px solid #aaa; border-radius:5px; padding:3px 10px; color:rgb(65, 139, 202);}
-input::-moz-placeholder, textarea::-moz-placeholder { color:rgb(65, 139, 202); opacity: 1; }
+select, button, input, textarea { display:inline-block; width:300px; border:1px solid #aaa; padding:3px 10px; color:#5D6A79; font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; -webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,.1); box-shadow:inset 1px 1px 1px rgba(0,0,0,.1); }
+input::-moz-placeholder, textarea::-moz-placeholder { color:#5D6A79; opacity: 1; }
 input[type="radio"], input[type="checkbox"] { display:inline; }
-input[type="submit"], input[type="button"] {
+input[type="submit"], input[type="button"], button {
     color: #000000;
     padding: 3px 10px;
-    background: -moz-linear-gradient(top, #ffffff 0%, #ababab);
-    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ababab));
-    border: 1px solid #7d7d7d;
-    -moz-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,0.7);
-    -webkit-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,0.7);
-    box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,0.7);
-    text-shadow: 0px -1px 0px rgba(255,255,255,0.4), 0px 1px 0px rgba(0,0,0,0.3);
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffffff 0%, #f0f0f0 50%, #e7e7e7 51%, #efefef 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f0f0f0), color-stop(51%,#e7e7e7), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#f0f0f0 50%,#e7e7e7 51%,#efefef 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#f0f0f0 50%,#e7e7e7 51%,#efefef 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#f0f0f0 50%,#e7e7e7 51%,#efefef 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffffff 0%,#f0f0f0 50%,#e7e7e7 51%,#efefef 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
+    border-radius:3px;
+    border: 1px solid #888888;
+    -moz-box-shadow: 0px 1px 3px rgba(000,000,000,0.1), inset 0px 0px 2px rgba(255,255,255,0.1);
+    -webkit-box-shadow: 0px 1px 3px rgba(000,000,000,0.1), inset 0px 0px 2px rgba(255,255,255,0.1);
+    box-shadow: 0px 1px 3px rgba(000,000,000,0.1), inset 0px 0px 2px rgba(255,255,255,0.1);
 }
 li.list, li.edit, li.create {
     position:relative;
@@ -47,7 +41,7 @@ li.list:before, li.edit:before, li.create:before {
     font-family:FontAwesome;
     display:block;
     width:20px;
-    color:white;
+    color:#5D6A79;
     position:absolute;
     top:0;
     left:-14px;
@@ -58,8 +52,19 @@ li.edit:before { content:""; }
 li.create:before { content:""; }
 
 .error { font-weight:bold; color:#a00; }
-.field { margin:1em 0; }
-.SubmitFormField { display:inline-block; }
-/* [data-fyi-url]:before { content: attr(data-fyi-url); } */
+.fieldholder { display:table-row; }
+.field {
+    display:table-cell;
+    padding:1em 0;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+    background-image: -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+    background-image: -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+    background-image: -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+}
 
 button span { font-family:FontAwesome; }
