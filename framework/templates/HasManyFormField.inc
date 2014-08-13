@@ -4,7 +4,7 @@
         {{ if ($Me->getParent()->getObject()->id): }}
             {{ if ($Me->getClass()): }}
                 <div class="option">
-                    <a class="button" href="{{{$Me->relationLink()}}}">{{{$Me->getClass()}}} erstellen</a>
+                    <a class="button" href="{{{$Me->relationLink(0)}}}">{{{$Me->getClass()}}} erstellen</a>
                 </div>
             {{ endif; }}
             {{ if ($Me->getClass()): }}

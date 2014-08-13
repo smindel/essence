@@ -11,7 +11,7 @@ button, input, select, textarea {
   font-family : inherit;
   font-size   : 100%;
 }
-label { display:table-cell;  padding:1em 0; padding-right:.75em; width:200px; text-align:right; font-weight:bold; }
+label { display:table-cell; vertical-align:top; padding:1em 0; padding-right:.75em; width:200px; text-align:right; font-weight:bold; }
 
 select, button, input, textarea { display:inline-block; width:300px; border:1px solid #aaa; padding:3px 10px; color:#5D6A79; font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; -webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,.1); box-shadow:inset 1px 1px 1px rgba(0,0,0,.1); }
 input::-moz-placeholder, textarea::-moz-placeholder { color:#5D6A79; opacity: 1; }
