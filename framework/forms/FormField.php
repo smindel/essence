@@ -84,6 +84,11 @@ abstract class FormField extends Controller
         return in_array($guess, $htmltypes) ? $guess : false;
     }
 
+    public function getRequired()
+    {
+        return $this->required;
+    }
+
     public function setRequired($required)
     {
         $this->required = $required;
