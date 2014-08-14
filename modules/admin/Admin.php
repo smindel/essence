@@ -50,13 +50,13 @@ class Admin extends Controller
         if (!$model) $this->index_action();
 
         $links = array(array(
-            'link' => $this->link('edit', $model),
+            'link' => $this->link('edit', $model, 0),
             'title' => "{$model} erstellen",
             'class' => 'create',
         ));
         foreach ($model::get() as $object) {
             $links[] = array(
-                'link' => $this->link('edit', get_class($object), $object->id),
+                'link' => $this->link('edit', $model, $object->id),
                 'title' => $object->title(),
                 'class' => 'edit',
             );
