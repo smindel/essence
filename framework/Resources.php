@@ -19,7 +19,7 @@ class Resources extends Base
             }
             if ($options['type'] == $type) $res[$path] = $options['priority'];
         }
-        ksort($res);
+        arsort($res);
         return array_keys($res);
     }
 

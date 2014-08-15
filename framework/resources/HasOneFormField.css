@@ -1,6 +1,3 @@
-.autocomplete {
-    position:relative;
-}
 .autocomplete-suggestions {
     position:absolute;
     border:1px solid #aaa;
@@ -8,17 +5,24 @@
     box-shadow: 2px 2px 3px rgba(000,000,000,0.1);
     background:white;
 }
-.autocomplete-suggestions.empty {
-    display:none;
-}
 .autocomplete-suggestions > * {
     padding:3px 10px;
     color:#5D6A79;
 }
-.autocomplete-suggestions .autocomplete-option {
+.autocomplete-suggestions * {
     cursor:pointer;
+    font-style: italic;
 }
-.autocomplete-suggestions .autocomplete-option.highlight {
+.autocomplete-suggestions [data-value] {
+    font-style: normal;
+}
+.autocomplete-suggestions [data-value="0"] {
+    font-style: italic;
+}
+.autocomplete-suggestions .candidate {
     background:red;
     color:white;
+}
+.autocomplete-label.empty {
+    font-style: italic;
 }

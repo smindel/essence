@@ -35,9 +35,19 @@ class HasOneFormField extends RelationFormField
     {
         $hint = strtolower(trim(strip_tags($hint)));
         $suggestions = array();
-        if ($hint) foreach ($this->options as $option) {
-            if (strpos(strtolower($option->title()), $hint) !== false) $suggestions[$option->id] = $option->title();
+
+        if ($this->canSetNull()) {
+            $suggestions[] = array('value' => 0, 'label' => 'no ' . $this->getClass());
         }
+
+        if ($hint) foreach ($this->options as $option) {
+            if (strpos(strtolower($option->title()), $hint) !== false) $suggestions[] = array('value' => $option->id, 'label' => $option->title());
+        }
+
+        if (empty($suggestions)) {
+            $suggestions[] = array('label' => 'no matches for ' . $hint);
+        }
+
         return array('suggestions' => $suggestions);
     }
 }
