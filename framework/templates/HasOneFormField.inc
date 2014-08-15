@@ -6,7 +6,7 @@
     <div class="field">
 
         <input
-            class="ochse"
+            class="autocomplete"
             type="text"
             id="{{{$Me->getName()}}}"
             name="{{{$Me->getFullName()}}}"
