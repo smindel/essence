@@ -3,6 +3,7 @@
 class Form extends Controller
 {
     protected $name;
+    protected $title;
     protected $fields;
     protected $action;
     protected $messageText;
@@ -25,6 +26,30 @@ class Form extends Controller
         $this->fields = $fieldcollection;
 
         foreach ($fields as $field) $field->setForm($this);
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    public function getTitle()
+    {
+        return $this->title ?: $this->name;
+    }
+
+    public function getBreadCrumbs()
+    {
+        $breadcrumbs = array();
+        $curr = $this->getParent();
+        while ($curr) {
+            if ($curr instanceof Form) {
+                array_unshift($breadcrumbs, "<a href=\"{$curr->link()}\">{$curr->getTitle()}</a>");
+            }
+            $curr = $curr->getParent();
+        }
+        return $breadcrumbs;
     }
 
     public function getName()

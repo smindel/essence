@@ -4,7 +4,7 @@
 
         {{ require($this->compile('collection')); }}
 
-        {{ if ($Me->getParent()->getObject()->id && $Me->getClass()): }}
+        {{ if ($Me->getClass()): }}
             {{ require($this->compile('autocomplete')); }}
         {{ endif; }}
 

@@ -83,18 +83,18 @@ class Model extends Base
 
     public function getFields()
     {
-        $fields = Collection::create(array(
-            'Header' => HtmlFormField::create('Header', null, "<h1>{$this->title()}</h1>")->setShowHolder(true)->setFieldSet('_FORM_HEADER_'),
-            'SecurityID' => SecurityTokenFormField::create('SecurityID')->setFieldSet('_FORM_HEADER_'),
-        ));
+        $fields = Collection::create();
         foreach ($this->getProperties('field') as $key => $fieldclass) {
             if (!$fieldclass) continue;
             switch (true) {
                 case is_a($fieldclass, 'ObjectFormField', true):
-                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'), $this->$key(), $this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'oninvalid'))->setFieldSet('Main');
+                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'), $this->$key(), $this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'oninvalid'))
+                                    ->setFieldSet('Main');
                     break;
                 case is_a($fieldclass, 'CollectionFormField', true):
-                    if ($this->id) $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'))->setFieldSet($key);
+                    if ($this->id) $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'))
+                                    ->setFieldSet($key)
+                                    ->setHydrate(array($this->getProperty($key, 'remotefield') => $this->id));
                     break;
                 default:
                     $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'))->setFieldSet('Main');
@@ -104,6 +104,8 @@ class Model extends Base
                 $fields[$key]->setCheck($this->getProperty($key, 'check'));
             }
         }
+        $fields['SecurityID'] = SecurityTokenFormField::create('SecurityID');
+        
         if ($this->id) {
             if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'ändern');
             if ($this->canDelete()) $fields['form_delete'] = SubmitFormField::create('form_delete', 'löschen');

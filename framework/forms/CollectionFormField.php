@@ -16,16 +16,4 @@ class CollectionFormField extends ModelFormField
     {
         return $this->selected;
     }
-
-    public function getRemainingOptions()
-    {
-        $name = $this->name;
-        $remaining = array();
-        $parentobject = $this->getParent()->getObject();
-        $remotejoinfield = $parentobject->getProperty($name, 'remotefield');
-        foreach ($this->getOptions() as $id => $option) {
-            if (!$option->$remotejoinfield || $option->$remotejoinfield->id != $parentobject->id) $remaining[$option->id] = $option;
-        }
-        return Collection::create($remaining);
-    }
 }

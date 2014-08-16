@@ -71,7 +71,7 @@ class Admin extends Controller
     {
         $this->object = $model::one($id) ?: $model::create();
         $fields = $this->object->getFields();
-        $form = Form::create($model . 'Form', $fields, $this);
+        $form = Form::create($model . 'Form', $fields, $this)->setTitle($this->object->title());
 
         return array(
             'Form' => $form->handleRequest($this->request),

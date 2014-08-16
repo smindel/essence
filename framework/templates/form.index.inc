@@ -1,4 +1,6 @@
 <form class="widget light" action="{{{$Me->getAction()}}}" name="{{{$Me->getName()}}}" method="post">
+    {{{implode(' > ', $Me->getBreadcrumbs())}}}
+    <h1>{{{$Me->getTitle()}}}</h1>
     {{ if(($msg = $Me->getMessage())): }}<div class="message {{{$msg['type']}}}">{{{$msg['text']}}}</div>{{ endif; }}
 
     {{ foreach($Me->getFieldsByFieldSet() as $fieldsetname => $fieldset): }}

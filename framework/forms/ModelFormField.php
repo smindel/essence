@@ -8,6 +8,7 @@ class ModelFormField extends FormField
     // ATTENTION: this is not the object of the parent form but the child form
     protected $options;
     protected $class;
+    protected $hydrate = array();
 
     public function getOptions()
     {
@@ -19,6 +20,12 @@ class ModelFormField extends FormField
         return $this->class;
     }
 
+    public function setHydrate($values)
+    {
+        $this->hydrate = $values;
+        return $this;
+    }
+
     public function relationLink($id = false)
     {
         return $this->currentLink() . 'fields/' . $this->name . '/edit/' . $id;
@@ -26,33 +33,15 @@ class ModelFormField extends FormField
 
     public function getForm($id)
     {
-        if (($remoteoptions = $this->parent->getObject()->{$this->name}()) && isset($remoteoptions[$id])) {
-            $this->object = $remoteoptions[$id];
+        if (isset($this->options[$id])) {
+            $this->object = $this->options[$id];
         } else {
-            switch ($this->parent->getObject()->getProperty($this->name, 'type')) {
-                case 'LOOKUP':
-                    $this->object = Base::create($this->parent->getObject()->getProperty($this->name, 'remoteclass'));
-                    $remotefield = $this->parent->getObject()->getProperty($this->name, 'remotefield');
-                    $this->object->$remotefield = $this->parent->getObject();
-                    break;
-                case 'FOREIGN':
-                    $this->object = Base::create($this->parent->getObject()->getProperty($this->name, 'remoteclass'));
-                    break;
-                default:
-                    throw new Exception(get_class($this) . ' can only be used on relations.');
-            }
+            $this->object = Base::create($this->getClass())->hydrate($this->hydrate);
         }
 
         $fields = $this->object->getFields();
-        $breadcrumbs = array();
-        $curr = $this;
-        while ($curr) {
-            if ($curr instanceof Form) array_unshift($breadcrumbs, "<a href=\"{$curr->link()}\">{$curr->getObject()->title()}</a>");
-            $curr = $curr->getParent();
-        }
-        $fields->insertBefore('Header', 'BreadCrumbs', HtmlFormField::create('BreadCrumbs', null, implode(' > ', $breadcrumbs))->setFieldSet('_FORM_HEADER_'));
 
-        return Form::create($this->name . 'Form', $fields, $this);
+        return Form::create($this->name . 'Form', $fields, $this)->setTitle($this->object->title());
     }
 
     public function edit_action($id)
