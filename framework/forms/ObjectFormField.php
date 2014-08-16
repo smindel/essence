@@ -1,6 +1,6 @@
 <?php
 
-class HasOneFormField extends RelationFormField
+class ObjectFormField extends ModelFormField
 {
     protected $oninvalid;
 

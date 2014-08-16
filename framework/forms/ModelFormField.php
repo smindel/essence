@@ -1,9 +1,9 @@
 <?php
 
-// RelationFormField von Model abkoppeln
-// HasOneFormField in ModelFormField und HasManyFormField in CollectionFormField umbenennen
+// ModelFormField von Model abkoppeln
+// ObjectFormField in ModelFormField und CollectionFormField in CollectionFormField umbenennen
 
-class RelationFormField extends FormField
+class ModelFormField extends FormField
 {
     // ATTENTION: this is not the object of the parent form but the child form
     protected $options;

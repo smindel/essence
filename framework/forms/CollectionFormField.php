@@ -1,6 +1,6 @@
 <?php
 
-class HasManyFormField extends RelationFormField
+class CollectionFormField extends ModelFormField
 {
     protected $selected;
 

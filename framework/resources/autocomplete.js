@@ -32,9 +32,9 @@
         elem.after(children.labelField);
         elem.hide();
 
-        data.labelField.on('keydown', $.fn.autocomplete.keypress);
-        data.labelField.on('blur', $.fn.autocomplete.blur);
-        data.suggestionContainer.hide().on('click', 'div', $.fn.autocomplete.click);
+        children.labelField.on('keydown', $.fn.autocomplete.keypress);
+        children.labelField.on('blur', $.fn.autocomplete.blur);
+        children.suggestionContainer.on('click', 'div[data-value]', $.fn.autocomplete.click).hide();
 
         elem.data('children', children);
         elem.data('data', data);
@@ -119,8 +119,8 @@
         var labelField = $(event.target);
         var parent = labelField.data('parent');
         var siblings = parent.data('children');
-        labelField.val('');
         window.setTimeout(function(){
+            labelField.val('');
             siblings.suggestionContainer.empty().hide();
         }, 100);
     }

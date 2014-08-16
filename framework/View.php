@@ -23,20 +23,21 @@ class View extends Base
         return (bool)self::create($name)->findTemplate();
     }
 
-    protected function findTemplate()
+    protected function findTemplate($search = null)
     {
+        $search = $search ?: $this->template;
         $template = false;
         $searchpaths = array('project', 'modules', 'framework');
         while (empty($template) && ($searchpath = array_shift($searchpaths))) {
-            $pattern = "{$this->template}.inc";
+            $pattern = "{$search}.inc";
             $template = Finder::find($pattern, $searchpath);
         }
         return $template;
     }
 
-    protected function compile()
+    protected function compile($name = null)
     {
-        $template = $this->findTemplate();
+        $template = $this->findTemplate($name);
         if (!$template) throw new Exception("No template found for '{$this->template}'");
 
         $cachedtemplate = 'cache' . DIRECTORY_SEPARATOR . str_replace(DIRECTORY_SEPARATOR, '.', $template);

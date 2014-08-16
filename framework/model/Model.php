@@ -20,7 +20,7 @@ class Model extends Base
             'type' => 'FOREIGN',
             'remoteclass' => 'someclass',
             'oninvalid' => 'SET NULL*|RESTRICT|CASCADE',
-            'field' => 'HasOneFormField',
+            'field' => 'ObjectFormField',
             'label' => 'Parent',
             'value' => null
         ),
@@ -28,7 +28,7 @@ class Model extends Base
             'type' => 'LOOKUP',
             'remoteclass' => 'RemoteClassName',
             'remotefield' => 'RemoteJoinField',
-            'field' => 'HasManyFormField',
+            'field' => 'CollectionFormField',
             'label' => 'Children',
         ),
     );
@@ -75,8 +75,8 @@ class Model extends Base
             case 'DATE': return 'DateFormField';
             case 'DATETIME': return 'DatetimeFormField';
             case 'BOOL': return 'CheckboxFormField';
-            case 'FOREIGN': return 'HasOneFormField';
-            case 'LOOKUP': return 'HasManyFormField';
+            case 'FOREIGN': return 'ObjectFormField';
+            case 'LOOKUP': return 'CollectionFormField';
             default: return 'TextFormField';
         }
     }
@@ -91,10 +91,10 @@ class Model extends Base
         foreach ($this->getProperties('field') as $key => $fieldclass) {
             if (!$fieldclass) continue;
             switch (true) {
-                case is_a($fieldclass, 'HasOneFormField', true):
+                case is_a($fieldclass, 'ObjectFormField', true):
                     $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'), $this->$key(), $this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'oninvalid'));
                     break;
-                case is_a($fieldclass, 'HasManyFormField', true):
+                case is_a($fieldclass, 'CollectionFormField', true):
                     if ($this->id) $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'));
                     break;
                 default:
