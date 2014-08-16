@@ -78,4 +78,24 @@ class ModelFormField extends FormField
         $this->object->delete();
         $this->redirect($this->parent->getParent()->currentLink());
     }
+
+    public function suggest_action($hint = '')
+    {
+        $hint = strtolower(trim(strip_tags($hint)));
+        $suggestions = array();
+
+        if (method_exists($this, 'canSetNull') && $this->canSetNull()) {
+            $suggestions[] = array('value' => 0, 'label' => 'no ' . $this->getClass());
+        }
+
+        if ($hint) foreach ($this->options as $option) {
+            if (strpos(strtolower($option->title()), $hint) !== false) $suggestions[] = array('value' => $option->id, 'label' => $option->title());
+        }
+
+        if (empty($suggestions)) {
+            $suggestions[] = array('label' => 'no matches for ' . $hint);
+        }
+
+        return array('suggestions' => $suggestions);
+    }
 }
