@@ -11,6 +11,7 @@ abstract class FormField extends Controller
     protected $required = false;
     protected $check = false;
     protected $errormsg = false;
+    protected $fieldset;
 
     public function __construct($name, $label = null, $value = null) {
         $this->name = $name;
@@ -101,20 +102,6 @@ abstract class FormField extends Controller
         return $this;
     }
 
-    public function validate($value)
-    {
-        if ($this->validator) return call_user_func($this->validator, $value, $this, $form);
-        if (!empty($value) && !empty($this->check) && !preg_match($this->check, $value)) {
-            $this->setError('This value is not alloed.');
-            return false;
-        }
-        if (empty($value) && $this->required) {
-            $this->setError('Please fill in this field.');
-            return false;
-        }
-        return true;
-    }
-
     public function setValidator($validator)
     {
         $this->validator = $validator;
@@ -127,8 +114,33 @@ abstract class FormField extends Controller
         return $this;
     }
 
-    public function getError($keep = false)
+    public function getError()
     {
         return $this->errormsg;
+    }
+
+    public function setFieldSet($fieldset)
+    {
+        $this->fieldset = $fieldset;
+        return $this;
+    }
+
+    public function getFieldSet()
+    {
+        return $this->fieldset;
+    }
+
+    public function validate($value)
+    {
+        if ($this->validator) return call_user_func($this->validator, $value, $this, $form);
+        if (!empty($value) && !empty($this->check) && !preg_match($this->check, $value)) {
+            $this->setError('This value is not alloed.');
+            return false;
+        }
+        if (empty($value) && $this->required) {
+            $this->setError('Please fill in this field.');
+            return false;
+        }
+        return true;
     }
 }

@@ -50,7 +50,7 @@ class ModelFormField extends FormField
             if ($curr instanceof Form) array_unshift($breadcrumbs, "<a href=\"{$curr->link()}\">{$curr->getObject()->title()}</a>");
             $curr = $curr->getParent();
         }
-        $fields->insertBefore('Header', 'BreadCrumbs', HtmlFormField::create('BreadCrumbs', null, implode(' > ', $breadcrumbs)));
+        $fields->insertBefore('Header', 'BreadCrumbs', HtmlFormField::create('BreadCrumbs', null, implode(' > ', $breadcrumbs))->setFieldSet('_FORM_HEADER_'));
 
         return Form::create($this->name . 'Form', $fields, $this);
     }

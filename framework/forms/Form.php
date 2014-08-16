@@ -37,6 +37,17 @@ class Form extends Controller
         return $this->fields;
     }
 
+    public function getFieldsByFieldSet()
+    {
+        $fieldsets = array('_FORM_HEADER_' => array());
+        foreach ($this->getFields() as $name => $field) {
+            $fieldset = $field->getFieldSet() ?: '_FORM_FOOTER_';
+            if (empty($fieldsets[$fieldset])) $fieldsets[$fieldset] = array();
+            $fieldsets[$fieldset][] = $field;
+        }
+        return $fieldsets;
+    }
+
     public function index_action()
     {
         // does the current request carry a form submission

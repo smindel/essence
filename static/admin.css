@@ -7,6 +7,15 @@ ul li {margin:0 0 .5em 1em;}
     margin:10px;
 }
 
+fieldset {
+    border:0 none;
+    padding:0;
+    margin:0;
+}
+legend {
+    display:none;
+}
+
 button, input, select, textarea {
   font-family : inherit;
   font-size   : 100%;

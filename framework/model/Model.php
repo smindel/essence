@@ -84,21 +84,20 @@ class Model extends Base
     public function getFields()
     {
         $fields = Collection::create(array(
-            'Header' => HtmlFormField::create('Header', null, "<h1>{$this->title()}</h1>")->setShowHolder(true),
-            'Line' => HtmlFormField::create('Header', null, "<hr>"),
-            'SecurityID' => SecurityTokenFormField::create('SecurityID'),
+            'Header' => HtmlFormField::create('Header', null, "<h1>{$this->title()}</h1>")->setShowHolder(true)->setFieldSet('_FORM_HEADER_'),
+            'SecurityID' => SecurityTokenFormField::create('SecurityID')->setFieldSet('_FORM_HEADER_'),
         ));
         foreach ($this->getProperties('field') as $key => $fieldclass) {
             if (!$fieldclass) continue;
             switch (true) {
                 case is_a($fieldclass, 'ObjectFormField', true):
-                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'), $this->$key(), $this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'oninvalid'));
+                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'), $this->$key(), $this->getProperty($key, 'remoteclass'), $this->getProperty($key, 'oninvalid'))->setFieldSet('Main');
                     break;
                 case is_a($fieldclass, 'CollectionFormField', true):
-                    if ($this->id) $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'));
+                    if ($this->id) $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'))->setFieldSet($key);
                     break;
                 default:
-                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'));
+                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'))->setFieldSet('Main');
             }
             if (isset($fields[$key])) {
                 $fields[$key]->setRequired($this->getProperty($key, 'required'));
