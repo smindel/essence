@@ -16,10 +16,24 @@ class Admin extends Controller
         return $this->parent->link('panel', $this->getName()) . '/';
     }
 
-    public function getModel()
+    /* for collectionformfield support in list_action START */
+
+    public function getClass()
     {
         return is_array($this->consumed) && count($this->consumed) > 1 ? $this->consumed[1] : static::$managed_models[0];
     }
+
+    public function relationLink($id)
+    {
+        return $this->link('edit', $this->getClass(), $id);
+    }
+
+    public function getSelected()
+    {
+        return Model::get($this->getClass());
+    }
+
+    /* for modelformfield support in list_action END */
 
     public function getObject()
     {

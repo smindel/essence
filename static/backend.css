@@ -166,6 +166,10 @@ main {
     overflow: hidden;
 }
 
+main > * {
+    margin:10px;
+}
+
 nav, main {
     height: 100%;
     overflow: auto;
