@@ -93,11 +93,12 @@ class Model extends Base
                     break;
                 case is_a($fieldclass, 'CollectionFormField', true):
                     if ($this->id) $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->$key, $this->$key(), $this->getProperty($key, 'remoteclass'))
-                                    ->setFieldSet($key)
+                                    ->setFieldSet(ucfirst($key))
                                     ->setHydrate(array($this->getProperty($key, 'remotefield') => $this->id));
                     break;
                 default:
-                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'))->setFieldSet('Main');
+                    $fields[$key] = $fieldclass::create($key, $this->getProperty($key, 'label'), $this->getProperty($key, 'value'))
+                                    ->setFieldSet('Main');
             }
             if (isset($fields[$key])) {
                 $fields[$key]->setRequired($this->getProperty($key, 'required'));
