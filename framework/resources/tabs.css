@@ -18,6 +18,6 @@ div.tab-base:after {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00999999', endColorstr='#00999999',GradientType=1 ); /* IE6-9 */
 }
 
-a.tab { display:inline-block; padding:.2em 2em; border-left:1px solid #ccc; text-decoration:none; }
+a.tab { display:inline-block; padding:.2em 2em; border-left:1px solid #ccc; text-decoration:none; color:#bbb; }
 a.tab:first-child { padding-left:209px; border-left:0 none; }
-a.tab.selected { font-weight:bold; }
+a.tab.selected { color:#444; }
