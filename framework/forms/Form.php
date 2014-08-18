@@ -36,7 +36,7 @@ class Form extends Controller
 
     public function getTitle()
     {
-        return $this->title ?: $this->name;
+        return $this->title ?: ucfirst($this->name);
     }
 
     public function getBreadCrumbs()
@@ -82,7 +82,7 @@ class Form extends Controller
         foreach ($this->fields as $field) {
             $submittedvalue = array_key_exists($field->getName(), $submitteddata) ? $submitteddata[$field->getName()] : null;
             if ($field instanceof SubmitFormField && isset($submittedvalue)) {
-                $callback = array($this->parent, $field->getName());
+                $callback = $field->getCallback();
             }
         }
 

@@ -48,8 +48,7 @@ class Authentication extends Controller
             $this->login($user);
             $this->redirect($_SESSION['authentication_redirect']);
         } else {
-            $fields['Name']->setError('Login oder Passwort falsch');
-            $this->redirectBack();
+            $fields['Name']->setError('Login or password is wrong');
         }
     }
 

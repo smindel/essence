@@ -41,7 +41,7 @@ class Model extends Base
         switch ($key) {
             case 'type': throw new Exception('Type must be defined');
             case 'oninvalid': return 'SET NULL';
-            case 'label': return $property;
+            case 'label': return ucfirst($property);
             case 'field': return $this->getDefaultFormFieldClass($property);
             default: return null;
         }
@@ -108,10 +108,10 @@ class Model extends Base
         $fields['SecurityID'] = SecurityTokenFormField::create('SecurityID');
         
         if ($this->id) {
-            if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'ändern');
-            if ($this->canDelete()) $fields['form_delete'] = SubmitFormField::create('form_delete', 'löschen');
+            if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'save');
+            if ($this->canDelete()) $fields['form_delete'] = SubmitFormField::create('form_delete', 'delete');
         } else {
-            if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'erstellen');
+            if ($this->canWrite()) $fields['form_save'] = SubmitFormField::create('form_save', 'create');
         }
         return $fields;
     }
