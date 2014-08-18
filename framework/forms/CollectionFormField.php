@@ -12,6 +12,16 @@ class CollectionFormField extends ModelFormField
         $this->selected = $selected;
     }
 
+    public function getCollectionControl()
+    {
+        $me = $this;
+        return View::create('collection')->render(array(
+            'class' => $this->getClass(),
+            'link' => function($id) use ($me) { return $me->relationLink($id); },
+            'values' => $this->getSelected(),
+        ));
+    }
+
     public function getSelected()
     {
         return $this->selected;

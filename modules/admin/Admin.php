@@ -16,25 +16,6 @@ class Admin extends Controller
         return $this->parent->link('panel', $this->getName()) . '/';
     }
 
-    /* for collectionformfield support in list_action START */
-
-    public function getClass()
-    {
-        return is_array($this->consumed) && count($this->consumed) > 1 ? $this->consumed[1] : static::$managed_models[0];
-    }
-
-    public function relationLink($id)
-    {
-        return $this->link('edit', $this->getClass(), $id);
-    }
-
-    public function getSelected()
-    {
-        return Model::get($this->getClass());
-    }
-
-    /* for modelformfield support in list_action END */
-
     public function getObject()
     {
         return $this->object;
@@ -63,21 +44,14 @@ class Admin extends Controller
     {
         if (!$model) $this->index_action();
 
-        $links = array(array(
-            'link' => $this->link('edit', $model, 0),
-            'title' => "{$model} erstellen",
-            'class' => 'create',
-        ));
-        foreach ($model::get() as $object) {
-            $links[] = array(
-                'link' => $this->link('edit', $model, $object->id),
-                'title' => $object->title(),
-                'class' => 'edit',
-            );
-        }
+        $me = $this;
         return array(
-            'Model' => $model,
-            'Links' => $links,
+            'class' => $model,
+            'collection' => View::create('collection')->render(array(
+                'class' => $model,
+                'link' => function($id) use ($me, $model) { return $me->link('edit', $model, $id); },
+                'values' => $model::get(),
+            )),
         );
     }
 

@@ -58,7 +58,6 @@ abstract class Controller extends Base
         $template = $class;
         if ($method) $template .= '.' . $method;
         while (!($exists = View::exists($template)) && $class && $i < 10) {
-            // if (get_class($this) == 'CollectionFormField' && $method == 'suggest') aDebug($class, $template);
             $class = get_parent_class($class);
             $template = $class;
             if ($method) $template .= '.' . $method;

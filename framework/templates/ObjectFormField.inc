@@ -2,7 +2,7 @@
     <label for="{{{$Me->getName()}}}">{{{$Me->getLabel()}}}</label>
     <div class="field">
 
-        {{ require($this->compile('autocomplete')); }}
+        {{{$Me->getAutocompleteControl()}}}
 
         <div class="message error">{{{$Me->getError()}}}</div>
     </div>

@@ -2,11 +2,8 @@
     <label for="{{{$Me->getName()}}}">{{{$Me->getLabel()}}}</label>
     <div class="field">
 
-        {{ require($this->compile('collection')); }}
-
-        {{ if ($Me->getClass()): }}
-            {{ require($this->compile('autocomplete')); }}
-        {{ endif; }}
+        {{{$Me->getCollectionControl()}}}
+        {{{$Me->getAutocompleteControl()}}}
 
         <div class="message error">{{{$Me->getError()}}}</div>
     </div>

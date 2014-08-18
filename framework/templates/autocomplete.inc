@@ -4,10 +4,10 @@
 <input
     class="autocomplete"
     type="text"
-    id="{{{$Me->getName()}}}"
-    name="{{{$Me->getFullName()}}}"
-    value="{{{$Me->getValue()}}}"
-    data-autocomplete-url="{{{$Me->currentlink() . 'fields/' . $Me->getName() . '/suggest/'}}}"
-    placeholder="{{{ $Me->getValue() ? $Me->getObject()->title() : 'no ' . ($Me->getClass()) }}}"
-    {{ if($Me->getRequired()): }} required{{ endif; }}
+    id="{{{$id}}}"
+    name="{{{$name}}}"
+    value="{{{$value}}}"
+    data-autocomplete-url="{{{$url}}}"
+    placeholder="{{{$label}}}"
+    {{ if($required): }} required{{ endif; }}
 >

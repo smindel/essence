@@ -10,6 +10,18 @@ class ModelFormField extends FormField
     protected $class;
     protected $hydrate = array();
 
+    public function getAutocompleteControl()
+    {
+        return View::create('autocomplete')->render(array(
+            'id' => $this->getName(),
+            'name' => $this->getFullName(),
+            'value' => $this->getValue(),
+            'url' => $this->currentlink() . 'fields/' . $this->getName() . '/suggest/',
+            'label' => $this->getValue() ? $this->getObject()->title() : 'no ' . $this->getClass(),
+            'required' => $this->getRequired(),
+        ));
+    }
+
     public function getOptions()
     {
         return $this->options;
