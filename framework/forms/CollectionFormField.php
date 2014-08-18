@@ -12,10 +12,17 @@ class CollectionFormField extends ModelFormField
         $this->selected = $selected;
     }
 
+    public function getObject()
+    {
+        return Model::one($this->class, $this->consumed[1]);
+    }
+
     public function getCollectionControl()
     {
         $me = $this;
         return View::create('collection')->render(array(
+            'autocomplete' => $this->getAutocompleteControl(),
+            'allowCreate' => true,
             'class' => $this->getClass(),
             'link' => function($id) use ($me) { return $me->relationLink($id); },
             'values' => $this->getSelected(),

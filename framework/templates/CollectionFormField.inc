@@ -3,7 +3,6 @@
     <div class="field">
 
         {{{$Me->getCollectionControl()}}}
-        {{{$Me->getAutocompleteControl()}}}
 
         <div class="message error">{{{$Me->getError()}}}</div>
     </div>

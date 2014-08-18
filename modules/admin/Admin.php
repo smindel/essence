@@ -48,11 +48,37 @@ class Admin extends Controller
         return array(
             'class' => $model,
             'collection' => View::create('collection')->render(array(
+                'autocomplete' => View::create('autocomplete')->render(array(
+                    'id' => $this->getName(),
+                    'name' => $this->getName() . "[{$model}]",
+                    'value' => 0,
+                    'url' => $this->link('suggest', $model) . '/',
+                    'link' => $this->link('edit', $model) . '/',
+                    'label' => 'no ' . $model,
+                    'required' => false,
+                )),
+                'allowCreate' => true,
                 'class' => $model,
                 'link' => function($id) use ($me, $model) { return $me->link('edit', $model, $id); },
                 'values' => $model::get(),
             )),
         );
+    }
+
+    public function suggest_action($model, $hint)
+    {
+        $hint = strtolower(trim(strip_tags($hint)));
+        $suggestions = array();
+
+        if ($hint) foreach ($model::get() as $option) {
+            if (strpos(strtolower($option->title()), $hint) !== false) $suggestions[] = array('value' => $option->id, 'label' => $option->title());
+        }
+
+        if (empty($suggestions)) {
+            $suggestions[] = array('label' => 'no matches for ' . $hint);
+        }
+
+        return array('suggestions' => $suggestions);
     }
 
     public function edit_action($model, $id = null)

@@ -1,4 +1,4 @@
-table.collection { border-spacing: 0; border-collapse: collapse; border:1px solid #aaa; margin-bottom:.1em; }
+table.collection { border-spacing: 0; border-collapse: collapse; border:1px solid #aaa; }
 table.collection tbody { background-color:#fff; }
 table.collection tbody tr:nth-child(even) { background-color:#F0F4F9; }
 table.collection tbody tr td { padding:3px 10px; color:#5D6A79; }

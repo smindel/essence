@@ -1,7 +1,6 @@
 .autocomplete-suggestions {
     position:absolute;
     border:1px solid #aaa;
-    border-top:0px none;
     box-shadow: 2px 2px 3px rgba(000,000,000,0.1);
     background:white;
 }
@@ -23,6 +22,14 @@
     background:red;
     color:white;
 }
+.autocomplete-label {
+    margin-bottom:.1em;
+}
 .autocomplete-label.empty {
     font-style: italic;
+}
+.autocomplete-button {
+    margin-left:2px;
+    width:auto;
+    padding:3px 2px;
 }

@@ -96,3 +96,13 @@ hr {
 }
 
 button span { font-family:FontAwesome; }
+
+.icon:before {
+    font-family:'FontAwesome';
+    display:block;
+    width:1em;
+    height:1em;
+    color:#5D6A79;
+}
+.icon-edit:before   { content:""; }
+.icon-create:before { content:""; }

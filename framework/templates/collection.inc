@@ -1,9 +1,10 @@
 {{ Resources::add("framework/resources/jquery-2.1.1.min.js", 100); }}
 {{ Resources::add("framework/resources/collection.js", 10); }}
 {{ Resources::add("framework/resources/collection.css"); }}
+{{{$autocomplete}}}
 <table class="collection">
     <tbody>
-        {{ if ($class): }}
+        {{ if ($allowCreate && $class): }}
             <tr id="{{{$class}}}[0]">
                 <td>
                     <a href="{{{$link(0)}}}">

@@ -8,6 +8,7 @@
     name="{{{$name}}}"
     value="{{{$value}}}"
     data-autocomplete-url="{{{$url}}}"
+    data-edit-url="{{{$link}}}"
     placeholder="{{{$label}}}"
     {{ if($required): }} required{{ endif; }}
 >

@@ -20,8 +20,6 @@
 
         if (children.tabsets.length < 2) return;
 
-        children.form.on('wheel', $.fn.tabs.wheel);
-
         children.tabsets.each(function(){
             var tab = $('<a class="tab" href="' + document.location.href + '#' + $(this).data('name') + '" data-tabset="' + $(this).data('name') + '">' + $(this).data('name') + '</a>');
             $(this).data('tab', tab);
@@ -43,12 +41,6 @@
         $('fieldset', form).hide();
         $('a.tab', form).removeClass('selected');
         tab.addClass('selected').data('tabset').show();
-    };
-
-    $.fn.tabs.wheel = function(event) {
-        console.log(event);
-        event.preventDefault();
-        return false;
     };
 
     $('.tab-base').tabs();

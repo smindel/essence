@@ -15,8 +15,9 @@ class ModelFormField extends FormField
         return View::create('autocomplete')->render(array(
             'id' => $this->getName(),
             'name' => $this->getFullName(),
-            'value' => $this->getValue(),
+            'value' => $this->getValue() ?: 0,
             'url' => $this->currentlink() . 'fields/' . $this->getName() . '/suggest/',
+            'link' => ($object = $this->parent->getObject()) && $object->id ? $this->relationLink() : null,
             'label' => $this->getValue() ? $this->getObject()->title() : 'no ' . $this->getClass(),
             'required' => $this->getRequired(),
         ));
@@ -85,7 +86,7 @@ class ModelFormField extends FormField
         $hint = strtolower(trim(strip_tags($hint)));
         $suggestions = array();
 
-        if (method_exists($this, 'canSetNull') && $this->canSetNull()) {
+        if (!$this->getRequired()) {
             $suggestions[] = array('value' => 0, 'label' => 'no ' . $this->getClass());
         }
 
