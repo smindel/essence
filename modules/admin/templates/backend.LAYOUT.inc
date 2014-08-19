@@ -19,7 +19,7 @@
         {{{ $_CONTENT_ }}}
     </main>
     <footer>
-        <a href="backend/panel/UserManager/edit/user/{{{Authentication::user()->id}}}"><span class="awesome"></span> {{{Authentication::user()->Name}}}</a>
+        <a href="backend/panel/UserManager/edit/user/{{{Authentication::user()->id}}}"><span class="awesome"></span> {{{Authentication::user()->name}}}</a>
         <a href="authentication/logout"><span class="awesome"></span> logout</a>
     </footer>
     {{{ Resources::js() }}}

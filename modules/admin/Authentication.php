@@ -28,8 +28,8 @@ class Authentication extends Controller
     public function login_action() {
         $form = Form::create('login', array(
             SecurityTokenFormField::create('SecurityID'),
-            TextFormField::create('Name'),
-            PasswordFormField::create('Password'),
+            TextFormField::create('name'),
+            PasswordFormField::create('password'),
             SubmitFormField::create('loginform_login', 'login'),
         ), $this);
 
@@ -41,15 +41,15 @@ class Authentication extends Controller
     public function loginform_login(Form $form)
     {
         $data = $form->getData();
-        $user = User::one('Name', $data['Name']);
-        $valid = $user && $data['Password'] == $user->Password;
+        $user = User::one('name', $data['name']);
+        $valid = $user && $data['password'] == $user->password;
         $fields = $form->getFields();
 
         if ($user && $valid) {
             $this->login($user);
             $this->redirect($_SESSION['authentication_redirect']);
         } else {
-            $fields['Name']->setError('Login or password is wrong');
+            $fields['name']->setError('Login or password is wrong');
         }
     }
 

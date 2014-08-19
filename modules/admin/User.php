@@ -4,9 +4,9 @@ class User extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array('type' => 'TEXT', 'UNIQUE' => true, 'required' => true),
-        'Email' => array('type' => 'TEXT', 'field' => 'EmailFormField'),
-        'Password' => array('type' => 'TEXT', 'field' => 'PasswordFormField', 'label' => 'Passwort', 'required' => true),
+        'name' => array('type' => 'TEXT', 'UNIQUE' => true, 'required' => true),
+        'email' => array('type' => 'TEXT', 'field' => 'EmailFormField'),
+        'password' => array('type' => 'TEXT', 'field' => 'PasswordFormField', 'label' => 'Passwort', 'required' => true),
     );
 
     public function title()
