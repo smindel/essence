@@ -25,9 +25,9 @@ abstract class Controller extends Base
 
         if (method_exists($this, 'beforeHandle')) $this->beforeHandle($request);
 
-        $this->response = $this->handleAction($this->method ?: 'index') ?: array();
+        if (empty($this->redirect)) $this->response = $this->handleAction($this->method ?: 'index') ?: array();
 
-        if (method_exists($this, 'beforeRender')) $this->beforeRender();
+        if (empty($this->redirect) && method_exists($this, 'beforeRender')) $this->beforeRender();
 
         return $this->__toString();
     }
@@ -104,7 +104,7 @@ abstract class Controller extends Base
         if (PHP_SAPI == 'cli') {
             if ($this->parent) $this->parent->redirect($url, $code);
         } else {
-            header('Location: ' . $url, true, $code);
+            header('Location: ' . Request::absolute_url($url), true, $code);
             exit;
         }
     }

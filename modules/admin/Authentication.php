@@ -2,11 +2,12 @@
 
 class Authentication extends Controller
 {
-    public static function challenge()
+    public function challenge()
     {
-        $_SESSION['authentication_redirect'] = $_SERVER['REQUEST_URI'];
-        $auth = self::create();
-        $auth->redirect($auth->link('login'));
+        // aDebug(BASE_PATH, RELATIVE_SEGMENT, BASE_URL);die();
+
+        $_SESSION['authentication_redirect'] = Controller::curr()->getRequest()->getUri();
+        $this->redirect('Authentication/login');
     }
 
     public function login(User $user)

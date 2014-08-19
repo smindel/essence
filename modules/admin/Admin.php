@@ -7,8 +7,7 @@ class Admin extends Controller
     public function beforeHandle($request)
     {
         Resources::add('static/admin.css');
-        if (Authentication::user()) return;
-        Authentication::challenge();
+        if (!Authentication::user()) Authentication::create($this)->challenge();
     }
 
     public function baseLink()

@@ -32,6 +32,8 @@ spl_autoload_register(function($classname){
 session_start();
 define('ENV_TYPE', 'dev');
 define('PASS_SALT', 'k.jna5v(8&');
-define('BASE_PATH', dirname(__FILE__));
-define('BASE_URL', 'http://' . (isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] . substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])) : 'localhost') . '/');
+define('SERVER_NAME', isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : 'localhost');
+define('BASE_PATH', dirname(__FILE__) . '/');
+define('RELATIVE_SEGMENT', empty($_SERVER["DOCUMENT_ROOT"]) || BASE_PATH == $_SERVER["DOCUMENT_ROOT"] ? '' : ltrim(substr(BASE_PATH, strlen($_SERVER["DOCUMENT_ROOT"])), '/'));
+define('BASE_URL', 'http://' . SERVER_NAME . '/' . RELATIVE_SEGMENT);
 set_include_path(get_include_path() . PATH_SEPARATOR . BASE_PATH);

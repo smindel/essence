@@ -7,8 +7,7 @@ class Backend extends Controller
     public function beforeHandle($request)
     {
         Resources::add('static/backend.css');
-        if (Authentication::user()) return;
-        Authentication::challenge();
+        if (!Authentication::user()) Authentication::create($this)->challenge();
     }
 
     public function index_action()
