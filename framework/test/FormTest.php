@@ -7,6 +7,9 @@ class FormTest extends PHPUnit_Framework_TestCase
     {
         $this->db = Database::conn();
         Database::conn(new PDO('sqlite::memory:'));
+
+        Builder::create()->build('FormTest_Model');
+        Builder::create()->build('FormTest_ModelChild');
     }
 
     public function tearDown()
@@ -16,9 +19,6 @@ class FormTest extends PHPUnit_Framework_TestCase
 
     public function testFormDisplay()
     {
-        Builder::create()->build('FormTest_Model');
-        Builder::create()->build('FormTest_ModelChild');
-
         $obj = FormTest_Model::create();
         $obj->Name = 'Andy';
         $obj->write();
@@ -96,9 +96,6 @@ class FormTest extends PHPUnit_Framework_TestCase
 
     public function testFormSubmit()
     {
-        Builder::create()->build('FormTest_Model');
-        Builder::create()->build('FormTest_ModelChild');
-
         $controllerclass = 'FormTest_Controller';
         $methodname = 'edit';
 
@@ -161,9 +158,6 @@ class FormTest extends PHPUnit_Framework_TestCase
 
     public function testNestedFormSubmit()
     {
-        Builder::create()->build('FormTest_Model');
-        Builder::create()->build('FormTest_ModelChild');
-
         $parent = FormTest_Model::create();
         $parent->Name = 'Andy';
         $parent->write();

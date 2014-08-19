@@ -7,6 +7,9 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $this->db = Database::conn();
         Database::conn(new PDO('sqlite::memory:'));
+
+        Builder::create()->build('ModelTest_Model');
+        Builder::create()->build('ModelTest_ModelChild');
     }
 
     public function tearDown()
@@ -16,8 +19,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCRUD()
     {
-        Builder::create()->build('ModelTest_Model');
-
         // create and write object
         $obj = ModelTest_Model::create();
         $obj->Name = 'Andy';
@@ -43,9 +44,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testRealtions()
     {
-        Builder::create()->build('ModelTest_Model');
-        Builder::create()->build('ModelTest_ModelChild');
-
         $parent1 = ModelTest_Model::create();
         $parent1->Name = 'Andy';
         $parent1->write();
