@@ -14,7 +14,7 @@
             </tr>
         {{ endif; }}
         {{ foreach ($values as $option): }}
-            <tr id="{{{$class}}}[{{{$option->id}}}]"><td><a href="{{{$link($option->id)}}}">{{{$option->title()}}}</a></td></tr>
+            <tr id="{{{$class}}}[{{{$option->id}}}]"><td><a href="{{{$link($option->id)}}}">{{{$option->getTitle()}}}</a></td></tr>
         {{ endforeach; }}
     </tbody>
 </table>

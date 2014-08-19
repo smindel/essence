@@ -18,7 +18,7 @@ class ModelFormField extends FormField
             'value' => $this->getValue() ?: 0,
             'url' => $this->currentlink() . 'fields/' . $this->getName() . '/suggest/',
             'link' => ($object = $this->parent->getObject()) && $object->id ? $this->relationLink() : null,
-            'label' => $this->getValue() ? $this->getObject()->title() : 'no ' . $this->getClass(),
+            'label' => $this->getValue() ? $this->getObject()->getTitle() : 'no ' . $this->getClass(),
             'required' => $this->getRequired(),
         ));
     }
@@ -54,7 +54,7 @@ class ModelFormField extends FormField
 
         $fields = $this->object->getFields();
 
-        return Form::create($this->name . 'Form', $fields, $this)->setTitle($this->object->title());
+        return Form::create($this->name . 'Form', $fields, $this)->setTitle($this->object->getTitle());
     }
 
     public function edit_action($id)
@@ -91,7 +91,7 @@ class ModelFormField extends FormField
         }
 
         if ($hint) foreach ($this->options as $option) {
-            if (strpos(strtolower($option->title()), $hint) !== false) $suggestions[] = array('value' => $option->id, 'label' => $option->title());
+            if (strpos(strtolower($option->getTitle()), $hint) !== false) $suggestions[] = array('value' => $option->id, 'label' => $option->getTitle());
         }
 
         if (empty($suggestions)) {

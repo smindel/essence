@@ -70,7 +70,7 @@ class Admin extends Controller
         $suggestions = array();
 
         if ($hint) foreach ($model::get() as $option) {
-            if (strpos(strtolower($option->title()), $hint) !== false) $suggestions[] = array('value' => $option->id, 'label' => $option->title());
+            if (strpos(strtolower($option->getTitle()), $hint) !== false) $suggestions[] = array('value' => $option->id, 'label' => $option->getTitle());
         }
 
         if (empty($suggestions)) {
@@ -84,7 +84,7 @@ class Admin extends Controller
     {
         $this->object = $model::one($id) ?: $model::create();
         $fields = $this->object->getFields();
-        $form = Form::create($model . 'Form', $fields, $this)->setTitle($this->object->title());
+        $form = Form::create($model . 'Form', $fields, $this)->setTitle($this->object->getTitle());
 
         return array(
             'Form' => $form->handleRequest($this->request),

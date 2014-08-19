@@ -9,7 +9,7 @@ class Model extends Base
             'label' => 'ID',
             'value' => null
         ),
-        'Name' => array(
+        'name' => array(
             'type' => 'TEXT',
             'size' => 32,
             'field' => 'TextFormField',
@@ -131,9 +131,9 @@ class Model extends Base
         return true;
     }
 
-    public function title()
+    public function getTitle()
     {
-        if (isset($this->db['Name'])) return $this->Name;
+        if (isset($this->db['title'])) return $this->getProperty('title', 'value');
         if (isset($this->db['name'])) return $this->name;
         return get_class($this) . " ({$this->id})";
     }
