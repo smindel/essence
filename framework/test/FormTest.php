@@ -20,7 +20,7 @@ class FormTest extends PHPUnit_Framework_TestCase
     public function testFormDisplay()
     {
         $obj = FormTest_Model::create();
-        $obj->Name = 'Andy';
+        $obj->name = 'Andy';
         $obj->write();
 
         $controllerclass = 'FormTest_Controller';
@@ -36,7 +36,7 @@ class FormTest extends PHPUnit_Framework_TestCase
             array(
                 'tag' => 'form',
                 'attributes' => array(
-                    // 'action' => 'Name',
+                    // 'action' => 'name',
                 )
             ),
             $response
@@ -60,8 +60,8 @@ class FormTest extends PHPUnit_Framework_TestCase
             array(
                 'tag' => 'input',
                 'attributes' => array(
-                    'id' => 'Name',
-                    'name' => 'FormTest_ModelForm[Name]',
+                    'id' => 'name',
+                    'name' => 'FormTest_ModelForm[name]',
                     'type' => 'text',
                     'value' => 'Andy',
                 )
@@ -101,13 +101,13 @@ class FormTest extends PHPUnit_Framework_TestCase
 
         $data = array(
             'IgnoreSecurityToken' => true,
-            'FormTest_ModelForm' => array('Name' => 'Andy', 'form_save' => 'save')
+            'FormTest_ModelForm' => array('name' => 'Andy', 'form_save' => 'save')
         );
         $request = Request::create(implode('/', array($controllerclass, $methodname)), $data);
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
-        $this->assertEquals('Andy', FormTest_Model::one()->Name, 'Form submission to create new object');
+        $this->assertEquals('Andy', FormTest_Model::one()->name, 'Form submission to create new object');
 
 
 
@@ -117,13 +117,13 @@ class FormTest extends PHPUnit_Framework_TestCase
 
         $data = array(
             'IgnoreSecurityToken' => true,
-            'FormTest_ModelForm' => array('Name' => 'Christian', 'form_save' => 'save')
+            'FormTest_ModelForm' => array('name' => 'Christian', 'form_save' => 'save')
         );
         $request = Request::create(implode('/', array($controllerclass, $methodname, $param)), $data);
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
-        $this->assertEquals('Christian', FormTest_Model::one()->Name, 'Form submission succeeds without Security Token');
+        $this->assertEquals('Christian', FormTest_Model::one()->name, 'Form submission succeeds without Security Token');
 
 
 
@@ -133,13 +133,13 @@ class FormTest extends PHPUnit_Framework_TestCase
 
         $data = array(
             'IgnoreSecurityToken' => false,
-            'FormTest_ModelForm' => array('Name' => 'Tom', 'form_save' => 'save')
+            'FormTest_ModelForm' => array('name' => 'Tom', 'form_save' => 'save')
         );
         $request = Request::create(implode('/', array($controllerclass, $methodname, $param)), $data);
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
-        $this->assertEquals('Christian', FormTest_Model::one()->Name, 'Form submission fails with empty Security Token');
+        $this->assertEquals('Christian', FormTest_Model::one()->name, 'Form submission fails with empty Security Token');
 
         $controllerclass = 'FormTest_Controller';
         $methodname = 'edit';
@@ -159,12 +159,12 @@ class FormTest extends PHPUnit_Framework_TestCase
     public function testNestedFormSubmit()
     {
         $parent = FormTest_Model::create();
-        $parent->Name = 'Andy';
+        $parent->name = 'Andy';
         $parent->write();
 
         $child = FormTest_ModelChild::create();
-        $child->Name = 'Milly';
-        $child->Daddy = $parent;
+        $child->name = 'Milly';
+        $child->daddy = $parent;
         $child->write();
 
         $controllerclass = 'FormTest_Controller';
@@ -172,22 +172,22 @@ class FormTest extends PHPUnit_Framework_TestCase
 
         $data = array(
             'IgnoreSecurityToken' => true,
-            'ChildrenForm' => array('Name' => 'Yoko', 'Daddy' => $parent->id, 'form_save' => 'save')
+            'childrenForm' => array('name' => 'Yoko', 'daddy' => $parent->id, 'form_save' => 'save')
         );
-        $request = Request::create(implode('/', array($controllerclass, $methodname, $parent->id, 'fields', 'Children', $methodname, $child->id)), $data);
+        $request = Request::create(implode('/', array($controllerclass, $methodname, $parent->id, 'fields', 'children', $methodname, $child->id)), $data);
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
-        $this->assertEquals('Yoko', FormTest_ModelChild::one($child->id)->Name, 'Nested Form can handle submission');
+        $this->assertEquals('Yoko', FormTest_ModelChild::one($child->id)->name, 'Nested Form can handle submission');
 
         $controllerclass = 'FormTest_Controller';
         $methodname = 'edit';
 
         $data = array(
             'IgnoreSecurityToken' => true,
-            'ChildrenForm' => array('Name' => 'Yoko', 'Daddy' => $parent->id, 'form_delete' => 'delete')
+            'childrenForm' => array('name' => 'Yoko', 'daddy' => $parent->id, 'form_delete' => 'delete')
         );
-        $request = Request::create(implode('/', array($controllerclass, $methodname, $parent->id, 'fields', 'Children', $methodname, $child->id)), $data);
+        $request = Request::create(implode('/', array($controllerclass, $methodname, $parent->id, 'fields', 'children', $methodname, $child->id)), $data);
         $controller = Base::create($request->consume());
         $response = $controller->handleRequest($request);
 
@@ -243,8 +243,8 @@ class FormTest_Model extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array('type' => 'TEXT'),
-        'Children' => array('type' => 'LOOKUP', 'remoteclass' => 'FormTest_ModelChild', 'remotefield' => 'Daddy'),
+        'name' => array('type' => 'TEXT'),
+        'children' => array('type' => 'LOOKUP', 'remoteclass' => 'FormTest_ModelChild', 'remotefield' => 'daddy'),
     );
 }
 
@@ -252,8 +252,8 @@ class FormTest_ModelChild extends Model
 {
     protected $db = array(
         'id' => array('type' => 'ID'),
-        'Name' => array('type' => 'TEXT'),
-        'Daddy' => array('type' => 'FOREIGN', 'remoteclass' => 'FormTest_Model', 'oninvalid' => 'RESTRICT'),
+        'name' => array('type' => 'TEXT'),
+        'daddy' => array('type' => 'FOREIGN', 'remoteclass' => 'FormTest_Model', 'oninvalid' => 'RESTRICT'),
     );
 
     public function getFields()
