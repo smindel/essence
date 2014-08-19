@@ -209,8 +209,6 @@ class FormTest_Controller extends Controller
         $this->object = FormTest_Model::one($id) ?: FormTest_Model::create();
         $fields = $this->object->getFields();
 
-        if ($this->request->getRaw('IgnoreSecurityToken')) unset($fields['SecurityID']);
-
         return Form::create('FormTest_ModelForm', $fields, $this);
     }
 
@@ -248,13 +246,6 @@ class FormTest_Model extends Model
         'Name' => array('type' => 'TEXT'),
         'Children' => array('type' => 'LOOKUP', 'remoteclass' => 'FormTest_ModelChild', 'remotefield' => 'Daddy'),
     );
-
-    public function getFields()
-    {
-        $fields = parent::getFields();
-        if (Controller::curr()->getRequest()->getRaw('IgnoreSecurityToken')) unset($fields['SecurityID']);
-        return $fields;
-    }
 }
 
 class FormTest_ModelChild extends Model

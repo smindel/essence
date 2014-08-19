@@ -13,10 +13,12 @@ class SecurityTokenFormField extends HiddenFormField
 
     public function validate($value)
     {
-        if (empty($_SESSION['SecurityID']) || $_SESSION['SecurityID'] != $value) {
-            $this->setError('An error occurred. Please try again.');
-            return false;
-        }
-        return parent::validate($value);
+        if (
+            (ENV_TYPE == 'test' && Controller::curr()->getRequest()->getRaw('IgnoreSecurityToken')) ||
+            (isset($_SESSION['SecurityID']) && $_SESSION['SecurityID'] == $value)
+        ) return parent::validate($value);
+
+        $this->setError('An error occurred. Please try again.');
+        return false;
     }
 }

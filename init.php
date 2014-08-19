@@ -30,7 +30,7 @@ spl_autoload_register(function($classname){
 });
 
 session_start();
-define('ENV_TYPE', 'dev');
+define('ENV_TYPE', PHP_SAPI == 'cli' ? 'test' : 'dev');
 define('PASS_SALT', 'k.jna5v(8&');
 define('SERVER_NAME', isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : 'localhost');
 define('BASE_PATH', dirname(__FILE__) . '/');
