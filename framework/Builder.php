@@ -34,11 +34,20 @@ class Builder extends Controller
         $base = $modelclass::base_class();
         if (!in_array($modelclass, $tables)) {
             $specs = array();
-            Database::create_table($base, $model->getProperties());
+            foreach ($model->getProperties() as $property => $void) {
+                foreach (array('type', 'unique', 'null', 'default', 'size', 'remoteclass', 'oninvalid') as $key) {
+                    $specs[$property][$key] = $model->getProperty($property, $key);
+                }
+            }
+            Database::create_table($base, $specs);
             $message = array('type' => 'good', 'text' => "table {$base} created");
         } else if (($diff = array_diff_key($model->getProperties(), Database::table($modelclass))) && count($diff)) {
             $cols = array();
-            foreach ($diff as $col => $spec) {
+            foreach ($diff as $col => $specs) {
+                $spec = array();
+                foreach (array('type', 'unique', 'null', 'default', 'size', 'remoteclass', 'oninvalid') as $key) {
+                    $spec[$key] = $model->getProperty($col, $key);
+                }
                 if (Database::spec($spec) === false) continue;
                 Database::add_column($base, $col, $spec);
                 $cols[] = $col;

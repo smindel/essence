@@ -36,9 +36,9 @@ class Database
 
     public static function spec($in)
     {
-        $constraint = empty($in['DEFAULT']) ? '' : ' DEFAULT ' . $in['DEFAULT'];
-        $constraint .= empty($in['NOT NULL']) ? '' : ' NOT NULL';
-        $constraint .= empty($in['UNIQUE']) ? '' : ' UNIQUE';
+        $constraint = empty($in['default']) ? '' : ' DEFAULT ' . $in['default'];
+        $constraint .= empty($in['null']) ? '' : ' NOT NULL';
+        $constraint .= empty($in['unique']) ? '' : ' UNIQUE';
         switch ($in['type']) {
             case 'ID': return 'INTEGER PRIMARY KEY AUTOINCREMENT';
             case 'TEXT': return 'VARCHAR(' . (empty($in['size']) ? 255 : $in['size']) . ')' . $constraint;
@@ -47,12 +47,12 @@ class Database
             case 'DATE': return 'DATE' . $constraint;
             case 'DATETIME': return 'DATETIME' . $constraint;
             case 'BOOL': return 'BOOLEAN' . $constraint;
-            case 'FOREIGN': return "INTEGER REFERENCES {$in['remoteclass']}(id) ON DELETE " . (empty($in['oninvalid']) ? 'SET NULL' : $in['oninvalid']);
+            case 'FOREIGN': return "INTEGER REFERENCES \"{$in['remoteclass']}\"(\"id\") ON DELETE " . (empty($in['oninvalid']) ? 'SET NULL' : $in['oninvalid']);
             case 'LOOKUP': return false;
         }
     }
 
-    public static function select($table, $filter = array())
+    public static function select($table, $filter = array(), $sort)
     {
         $params = array();
         $where = count($filter) ? array() : array('1');
@@ -61,7 +61,7 @@ class Database
             $where[] = "\"{$key}\" {$operator} :{$key}";
             $params[':' . $key] = $val;
         }
-        $sql = 'SELECT * FROM "' . $table . '" WHERE ' . implode(' AND ', $where);
+        $sql = 'SELECT * FROM "' . $table . '" WHERE ' . implode(' AND ', $where) . ' ORDER BY ' . $sort;
         $sth = self::conn()->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         if (!$sth) {
             $error = self::conn()->errorInfo();

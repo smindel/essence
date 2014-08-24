@@ -2,12 +2,21 @@
 
 class Model extends Base
 {
+    /*
+    sorting
+    tablename
+    */
+    protected $sort = '"id" ASC';
+
     protected $db = array(
         'id' => array(
             'type' => 'ID',
             'field' => 'HiddenFormField',
             'label' => 'ID',
             'value' => null
+        ),
+        'classname' => array(
+            'type' => 'TEXT',
         ),
         'name' => array(
             'type' => 'TEXT',
@@ -33,6 +42,13 @@ class Model extends Base
         ),
     );
 
+    public function __construct()
+    {
+        foreach ($this->db as $property => & $spec) {
+            if (!is_null($default = $this->getProperty($property, 'default'))) $spec['value'] = $default;
+        }
+    }
+
     public function getProperty($property, $key = null)
     {
         if (!isset($this->db[$property])) return false;
@@ -43,6 +59,15 @@ class Model extends Base
             case 'oninvalid': return 'SET NULL';
             case 'label': return ucfirst($property);
             case 'field': return $this->getDefaultFormFieldClass($property);
+            case 'null': return in_array($this->db[$property]['type'], array('ID', 'DATE', 'DATETIME', 'BOOL', 'FOREIGN')) ? true : false;
+            case 'default':
+                if (!$this->getProperty($property, 'null')) {
+                    if (in_array($this->db[$property]['type'], array('ID', 'INT', 'FLOAT', 'FOREIGN'))) {
+                        return 0;
+                    } else {
+                        return '';
+                    }
+                }
             default: return null;
         }
     }
@@ -59,9 +84,9 @@ class Model extends Base
 
     public static function base_class()
     {
-        $class = get_called_class();
+        $class = func_num_args() ? func_get_arg(0) : get_called_class();
         if ($class == 'Model') throw new Exception('Cannot find base for class Model');
-        while (get_parent_class($class) != 'Model' && $i < 100) $class = get_parent_class($class);
+        while (get_parent_class($class) != 'Model') $class = get_parent_class($class);
         return $class;
     }
 
@@ -135,7 +160,8 @@ class Model extends Base
     {
         if (isset($this->db['title'])) return $this->getProperty('title', 'value');
         if (isset($this->db['name'])) return $this->name;
-        return get_class($this) . " ({$this->id})";
+        if ($this->id) return get_class($this) . " ({$this->id})";
+        return 'new ' . get_class($this);
     }
 
     public static function one()
@@ -157,7 +183,7 @@ class Model extends Base
             case 2: $filter = array($args[0] => $args[1]); break;
         }
         $list = array();
-        foreach (Database::select($modelclass::base_class(), $filter) as $record) {
+        foreach (Database::select($modelclass::base_class(), $filter, $modelclass::create()->sort) as $record) {
             $object = $modelclass::create()->hydrate($record);
             if($object->canRead()) $list[$object->id] = $object;
         }
@@ -183,7 +209,7 @@ class Model extends Base
     {
         if (method_exists($this, ($method = 'set' . $key))) {
             $this->$method($val);
-        } else if ($key == 'id') {
+        } else if ($key == 'id' || $key == 'classname') {
             throw new Exception("Cannot set property '" . get_class($this) . "->$key'");
         } else if (isset($this->db[$key])) {
             switch ($this->getProperty($key, 'type')) {
@@ -245,6 +271,7 @@ class Model extends Base
             if (!array_key_exists('value', $options) || isset($options['type']) && Database::spec($options) === false) continue;
             $values[$key] = $options['value'];
         }
+        // $values['classname'] = get_class($this);
 
         if ($this->id) {
             if (count($values)) Database::update(self::base_class(), $values);
